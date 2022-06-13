@@ -1,4 +1,4 @@
-# gba-2k
+# gba2k
 
 A GBA development project.
 

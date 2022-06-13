@@ -1,5 +1,5 @@
 [package]
-name = "gba-2k"
+name = "gba2k"
 version = "0.0.1"
 edition = "2021"
 license = "Zlib OR Apache-2.0 OR MIT"
