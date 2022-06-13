@@ -4,3 +4,6 @@ version = "0.0.1"
 edition = "2021"
 license = "Zlib OR Apache-2.0 OR MIT"
 publish = false
+
+[dependencies]
+voladdress = "1"
