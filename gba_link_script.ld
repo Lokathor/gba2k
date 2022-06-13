@@ -31,6 +31,7 @@ SECTIONS {
     __iwram_end = ABSOLUTE(.);
   } >iwram AT>rom = 0xff
 
+  __bss_position_in_rom = .;
   .bss : {
     __bss_start = ABSOLUTE(.);
 

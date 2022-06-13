@@ -7,6 +7,13 @@ core::arch::global_asm! {
   options(raw)
 }
 
+extern "C" {
+  static mut RUST_IRQ_HANDLER: Option<extern "C" fn(u16)>;
+}
+pub fn set_rust_irq_handler(opt_f: Option<extern "C" fn(u16)>) {
+  unsafe { RUST_IRQ_HANDLER = opt_f };
+}
+
 #[panic_handler]
 fn the_panic_handler(_: &core::panic::PanicInfo) -> ! {
   loop {}
