@@ -28,8 +28,8 @@ sudo make install
 ```
 
 There's a few GBA emulators besides just mGBA, but I happen to know that mGBA
-lets you load and run ELF files directly. It also has some handy debugging
-features that will help during development.
+lets you load and run ELF files directly, which makes just a little nicer for
+us. It also has some handy debugging features that will help during development.
 
 ### Get your compilation tools
 
@@ -49,11 +49,11 @@ manager. For debian-like systems the correct package should be under
 
 [arm-dev]: https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads
 
-Lastly, while it will be possbile to run ELF files in mGBA for most of our
-development, if you want to make a "real" ROM that could be run on harware,
-we'll need a tool called `gbafix`. The first version of this tool is a C program
-you can get with the Dev Kit Pro ARM distribution, but there's also a Rust
-version you can just build/install it through `cargo`.
+Lastly, a normal compilation will have `rustc` produce a ELF file. mGBA can load
+and run an ELF file, but if you want an actual ROM that could run on hardware
+there's a few extra steps, one of which is using a tool called `gbafix`. There's
+a C version that you can get with the Dev Kit Pro ARM distribution, but there's
+also a Rust version you can just build/install it through `cargo`.
 
 ```sh
 cargo install gbafix
