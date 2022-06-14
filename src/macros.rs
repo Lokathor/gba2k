@@ -1,0 +1,79 @@
+macro_rules! pub_const_fn_new {
+  () => {
+    pub const fn new() -> Self {
+      Self(0)
+    }
+  };
+}
+
+macro_rules! unsafe_u16_enum_field {
+  ($low:literal - $high:literal: $enum_ty:ty, $get_name:ident, $with_name: ident) => {
+    pub const fn $get_name(self) -> $enum_ty {
+      unsafe {
+        core::mem::transmute(crate::bit_utils::u16_get_region::<$low, $high>(
+          self.0,
+        ))
+      }
+    }
+    pub const fn $with_name(self, val: $enum_ty) -> Self {
+      Self(crate::bit_utils::u16_with_region::<$low, $high>(self.0, val as u16))
+    }
+  };
+}
+
+macro_rules! u16_bool_field {
+  ($bit:literal, $get_name:ident, $with_name: ident) => {
+    pub const fn $get_name(self) -> bool {
+      crate::bit_utils::u16_get_bit::<$bit>(self.0)
+    }
+    pub const fn $with_name(self, val: bool) -> Self {
+      Self(crate::bit_utils::u16_with_bit::<$bit>(self.0, val))
+    }
+  };
+}
+
+macro_rules! impl_bitops_for {
+  ($t:ty) => {
+    impl core::ops::BitAnd for $t {
+      type Output = Self;
+      fn bitand(self, rhs: Self) -> Self {
+        Self(self.0.bitand(rhs.0))
+      }
+    }
+    impl core::ops::BitOr for $t {
+      type Output = Self;
+      fn bitor(self, rhs: Self) -> Self {
+        Self(self.0.bitor(rhs.0))
+      }
+    }
+    impl core::ops::BitXor for $t {
+      type Output = Self;
+      fn bitxor(self, rhs: Self) -> Self {
+        Self(self.0.bitxor(rhs.0))
+      }
+    }
+    //
+    impl core::ops::Not for $t {
+      type Output = Self;
+      fn not(self) -> Self {
+        Self(self.0.not())
+      }
+    }
+    //
+    impl core::ops::BitAndAssign for $t {
+      fn bitand_assign(&mut self, rhs: Self) {
+        self.0.bitand_assign(rhs.0)
+      }
+    }
+    impl core::ops::BitOrAssign for $t {
+      fn bitor_assign(&mut self, rhs: Self) {
+        self.0.bitor_assign(rhs.0)
+      }
+    }
+    impl core::ops::BitXorAssign for $t {
+      fn bitxor_assign(&mut self, rhs: Self) {
+        self.0.bitxor_assign(rhs.0)
+      }
+    }
+  };
+}
