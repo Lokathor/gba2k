@@ -13,7 +13,7 @@ impl<T> GbaCell<T> {
   /// Types stored in a `GbaCell` should be types that can be read/written with
   /// a single machine instruction. This basically means any 1, 2, or 4 byte
   /// type that's a single field.
-  pub unsafe fn new_unchecked(t: T) -> Self {
+  pub const unsafe fn new_unchecked(t: T) -> Self {
     Self(UnsafeCell::new(t))
   }
   pub fn read(&self) -> T {

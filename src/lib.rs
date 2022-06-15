@@ -12,6 +12,7 @@ mod bit_utils;
 
 pub mod bios;
 pub mod interrupts;
+pub mod keys;
 pub mod video;
 
 #[panic_handler]
