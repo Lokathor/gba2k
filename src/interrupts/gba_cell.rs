@@ -1,6 +1,6 @@
 use core::{cell::UnsafeCell, fmt::Debug};
 
-use crate::{keys::Keys, rt0_rom_swp, rt0_rom_swpb};
+use crate::{keys::Keys, rt0_rom_swp, rt0_rom_swpb, video::color::Color};
 
 /// A GbaCell holds a `Copy` value that's accessed in a single machine
 /// instruction.
@@ -74,6 +74,14 @@ impl GbaCell<Keys> {
   #[inline]
   #[must_use]
   pub const fn new_keys(x: Keys) -> Self {
+    Self(UnsafeCell::new(x))
+  }
+}
+
+impl GbaCell<Color> {
+  #[inline]
+  #[must_use]
+  pub const fn new_color(x: Color) -> Self {
     Self(UnsafeCell::new(x))
   }
 }

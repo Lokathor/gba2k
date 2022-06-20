@@ -7,6 +7,8 @@ use voladdress::*;
 pub struct Color(u16);
 
 impl Color {
+  pub const WHITE: Self = Self(0b11111_11111_11111);
+
   pub_const_fn_new!();
   unsafe_u16_val_field!(0 - 4, red, with_red);
   unsafe_u16_val_field!(5 - 9, green, with_green);

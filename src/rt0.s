@@ -96,126 +96,57 @@
 .section .iwram.rt0_irq_handler
   .align 4
   rt0_irq_handler:
-    /*
-    When a hardware interrupt occurs the CPU switches into Supervisor mode and
-    execution goes into the BIOS, which does the following steps:
+    handle_irq_with_interrupts_off:
+    add r12, r0, #0x208 @r12=&IME
+    mov r3, #0
+    swp r3, r3, [r12]   @IME swap off
+    @ still important, r3, r12
 
-    * push r0-r3, r12, and lr
-    * set r0 to 0x04000000
-    * set lr to after the call to the program handler
-    * load the program's IRQ handler (at 0x04000000 - 4)
-    * call the program handler
-    * pop all the pushed registers
-    * return from the hardware interrupt
+    read_update_hardware_flags:
+    ldr r0, [r12, #-8]      @r0=IE_IF
+    and r0, r0, r0, LSR #16 @r0=IE&IF
+    strh r0, [r12, #-6]     @IF=r0
+    @ still important, r0, r3, r12
 
-    Our program's handler function is supposed to acknowledge any flagged
-    interrupts before returning. Any flags that aren't acknowledged will trigger
-    another hardware interrupt after the current one returns, so it's most
-    efficient to just acknowledge all of them at once.
+    read_update_bios_flags:
+    sub  r2, r12, #(0x208+8)    @r2=&BIOS_IW
+    ldrh r1, [r2]           @r1=BIOS_IW
+    orr  r1, r1, r0         @r1=r1|r0
+    strh r1, [r2]           @BIOS_IW=r0
+    @ still important, r0, r3, r12
 
-    Also, to work with the IntrWait functions, the BIOS_IF value should be
-    updated as well.
+    get_rust_fn_ptr:
+    ldr r1, =RUST_IRQ_HANDLER
+    ldr r1, [r1]       @r1==RUST_IRQ_HANDLER
+    cmp r1, #0         @if r1==0
+    beq end_of_rt0     @then branch
+    @ still important, r0, r1, r3, r12
 
-    Most programs want to do something during the interrupt besides just
-    acknowledge it. To make this part easily configurable from Rust the rt0 code
-    provides a `RUST_IRQ_HANDLER` variable which the program can set. When it's
-    non-null the rt0 handler will call that function with the flags of what
-    interrupts were just acknowledged before returning to the BIOS.
-    */
-    swap_ime_off:
-      /* Current Important Registers:
-      * r0: MMIO_BASE (0x04000000)
-      */
-      /* We don't want IME to be active during our handler. However, we can't
-      strictly assume that IME is on when our handler is running. There's a 2
-      cycle delay between an interrupt triggering and it actually changing over
-      the CPU. It's possible for IME to be turned off during this window. For
-      maximum robustness we need to swap IME to 0 and then swap it back later.
-      This ensures that we always restore the correct IME value. */
-      add   r2, r0, #0x208
-      mov   r12, #0
-      swp   r12, r12, [r2]
+    call_rust_fn_in_sys_mode:
+    mrs r2, SPSR      @save SPSR
+    push {r0, r2}     @push SPSR (SVC)
 
-    update_hardware_flagged_bits:
-      /* This acknowledges all interrupts to the hardware. To do this need to
-      write a `1` bit to any bit that's set in both IE and IF. For efficiency we
-      do a 32-bit read from 0x04000200, then we bitand the top and bottom half
-      of that, and write back to IF. */
-      ldr   r3, [r2, #-8]
-      and   r3, r0, r0, lsr #16
-      strh  r3, [r2, #-6]
-    
-    update_bios_flagged_bits:
-      /* This acknowledges all interrupts to the BIOS_IF. This is a normal
-      variable, not an MMIO. We need to read BIOS_IF, then bitor that with the
-      new interrupt bits we just got from above, and then write it back. */
-      ldrh  r1, [r0, #-8]
-      orr   r1, r1, r3
-      strh  r1, [r0, #-8]
-    
-    load_rust_handler_fn:
-      /* Read the `RUST_IRQ_HANDLER` value and skip past calling the function if
-      it's null. */
-      ldr   r1, =RUST_IRQ_HANDLER
-      ldr   r1, [r1]
-      cmp   r1, #0
-      beq   end_of_handler
+    mov r2, #0b00011111
+    msr CPSR_cf, r2   @SYS mode
 
-    switch_to_sys_mode_and_call_fn:
-      /* Now we need to switch the CPU from Supervisor mode to System mode. The
-      old flags are in SPSR, and the switching will overwrite it, so first we
-      need to read the current SPSR and push it onto the Supervisor stack. Then
-      we can write to the "CPSR control flag" to change to System mode. */
-      mrs   r3, SPSR
-      push  {r3}
-      mov   r3, #0b00011111
-      msr   CPSR_cf, r3
-      /* Now we're in System mode, but it's possible the stack might not be
-      aligned to 8 (it might only be aligned to 4). This shouldn't ever matter,
-      but that's what the ABI calls for, and it's a very small step to conform
-      to the ABI, so we might as well. To do this, we first save SP into a temp
-      register and then clear the lowest 3 bits of SP. This effectively "pushes"
-      sufficient stack junk so that SP is aligned. */
-      mov   r3, sp
-      bic   sp, sp, #7
-      /* Now we're almost ready to do the call, but there's a few registers we
-      need to save for after the call. Also, now that our stack is aligned to 8,
-      we need to push an even number of registers to the stack so that it stays
-      aligned to 8. The register we want to save are as follows:
+    push {r3, r12}
 
-      * lr: the return address for our rt0 function
-      * r12: the swapped IME value
-      * r3: the old SP value
-      * r2: This holds the IME address, which we could regenerate if we needed
-        to, but we need to save an even number of registers and we'll use the
-        IME address, so we might as well save this one.
+    ldr lr, =1f
+    bx r1
+    1:
 
-      After we've saved our registers we can set lr to return here and make the
-      call to the Rust function.
-      */
-      push  {r2, r3, r12, lr}
-      adr   lr, restore_state_from_fn_call
-      bx    r1
-    
-    restore_state_from_fn_call:
-      /* After the Rust function returns we undo all the steps we did to get
-      here:
+    pop {r3, r12}
 
-      * pop all of our saved registers off of the System stack
-      * go back to Supervisor mode
-      * pop the saved SPSR off of the Supervisor stack
-      * swap IME back to its previous state
-      */
-      pop   {r2, r3, r12, lr}
-      mov   sp, r3
-      mov   r3, #0b10010010
-      msr   CPSR_cf, r3
-      pop   {r3}
-      msr   SPSR, r3
-    
-    end_of_handler:
-      swp   r12, r12, [r2]
-      bx    lr
+    mov r2, #0b10010010
+    msr CPSR_cf, r2   @SVC mode
+
+    pop {r0, r2}      @pop SPSR (SVC)
+    msr SPSR, r2      @restore SPSR
+    @ still important, r3, r12
+
+    end_of_rt0:
+    swp r3, r3, [r12]  @IME swap previous
+    bx lr              @return
 .previous
 
 .section .bss.rust_irq_handler_fn_ptr
