@@ -1,3 +1,4 @@
+pub mod color;
 pub mod display_control;
 pub mod display_status;
 

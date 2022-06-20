@@ -13,6 +13,7 @@ pub use gba_cell::*;
 extern "C" {
   static RUST_IRQ_HANDLER: GbaCell<Option<extern "C" fn(IrqBits)>>;
 }
+#[inline]
 pub fn set_rust_irq_handler(opt_f: Option<extern "C" fn(IrqBits)>) {
   unsafe { RUST_IRQ_HANDLER.write(opt_f) };
 }
@@ -54,42 +55,4 @@ impl IrqBits {
   pub const DMA3: Self = Self::new().with_dma3(true);
   pub const KEYPAD: Self = Self::new().with_keypad(true);
   pub const GAMEPAK: Self = Self::new().with_gamepak(true);
-}
-
-/// Reads the address given, then writes a new value, then returns the old
-/// value.
-///
-/// The entire operation happens as a single action, an interrupt cannot fire in
-/// between the read and the write.
-///
-/// ## Safety
-/// * The pointer must be valid for a standard [`read`](core::ptr::read)
-/// * The pointer must be valid for a standard [`write`](core::ptr::write)
-#[link_section = ".iwram"]
-#[instruction_set(arm::a32)]
-pub unsafe fn a32_swp_raw(new_val: u32, addr: *mut u32) -> u32 {
-  let old_val: u32;
-  core::arch::asm! {
-    "swp {old_val}, {new_val}, [{addr}]",
-    old_val = lateout(reg) old_val,
-    new_val = in(reg) new_val,
-    addr = in(reg) addr,
-    options(nostack)
-  }
-  old_val
-}
-
-/// Works like [`a32_swp_raw`], but with `u8`.
-#[link_section = ".iwram"]
-#[instruction_set(arm::a32)]
-pub unsafe fn a32_swpb_raw(new_val: u8, addr: *mut u8) -> u8 {
-  let old_val: u8;
-  core::arch::asm! {
-    "swp {old_val}, {new_val}, [{addr}]",
-    old_val = lateout(reg) old_val,
-    new_val = in(reg) new_val,
-    addr = in(reg) addr,
-    options(nostack)
-  }
-  old_val
 }

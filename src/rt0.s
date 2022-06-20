@@ -74,7 +74,26 @@
   end_of_init_code:
 .previous
 
-.section .iwram
+.section .text.single_instructions
+  .align 4
+  /*
+  unsafe extern "C" fn rt0_rom_swp(new_val: u32, addr: *mut u32) -> u32
+  */
+  .global rt0_rom_swp
+  rt0_rom_swp:
+    swp r0, r0, [r1]
+    bx lr
+  
+  /*
+  unsafe extern "C" fn rt0_rom_swpb(new_val: u8, addr: *mut u8) -> u8
+  */
+  .global rt0_rom_swpb
+  rt0_rom_swpb:
+    swpb r0, r0, [r1]
+    bx lr
+.previous
+
+.section .iwram.rt0_irq_handler
   .align 4
   rt0_irq_handler:
     /*
@@ -104,6 +123,9 @@
     interrupts were just acknowledged before returning to the BIOS.
     */
     swap_ime_off:
+      /* Current Important Registers:
+      * r0: MMIO_BASE (0x04000000)
+      */
       /* We don't want IME to be active during our handler. However, we can't
       strictly assume that IME is on when our handler is running. There's a 2
       cycle delay between an interrupt triggering and it actually changing over
@@ -114,7 +136,7 @@
       mov   r12, #0
       swp   r12, r12, [r2]
 
-    update_if_bits:
+    update_hardware_flagged_bits:
       /* This acknowledges all interrupts to the hardware. To do this need to
       write a `1` bit to any bit that's set in both IE and IF. For efficiency we
       do a 32-bit read from 0x04000200, then we bitand the top and bottom half
@@ -123,7 +145,7 @@
       and   r3, r0, r0, lsr #16
       strh  r3, [r2, #-6]
     
-    update_bios_if_bits:
+    update_bios_flagged_bits:
       /* This acknowledges all interrupts to the BIOS_IF. This is a normal
       variable, not an MMIO. We need to read BIOS_IF, then bitor that with the
       new interrupt bits we just got from above, and then write it back. */
@@ -196,7 +218,7 @@
       bx    lr
 .previous
 
-.section .bss
+.section .bss.rust_irq_handler_fn_ptr
   .align 4
   .global RUST_IRQ_HANDLER
   /* RUST_IRQ_HANDLER: Option<extern "C" fn(IrqBits)> = None; */

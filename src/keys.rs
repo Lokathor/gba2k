@@ -2,6 +2,21 @@
 #[repr(transparent)]
 pub struct KeysLowActive(u16);
 
+impl From<KeysLowActive> for Keys {
+  #[inline]
+  #[must_use]
+  fn from(low: KeysLowActive) -> Self {
+    Self(low.0 ^ 0b11_1111_1111)
+  }
+}
+impl From<KeysLowActive> for u16 {
+  #[inline]
+  #[must_use]
+  fn from(low: KeysLowActive) -> Self {
+    low.0
+  }
+}
+
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)]
 pub struct Keys(u16);
@@ -22,13 +37,6 @@ impl Keys {
   u16_bool_field!(9, l, with_l);
 }
 
-impl From<KeysLowActive> for Keys {
-  #[inline]
-  #[must_use]
-  fn from(low: KeysLowActive) -> Self {
-    Self(low.0 ^ 0b11_1111_1111)
-  }
-}
 impl From<Keys> for KeysLowActive {
   #[inline]
   #[must_use]
