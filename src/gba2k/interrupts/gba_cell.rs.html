@@ -74,11 +74,14 @@
 <span id="67">67</span>
 <span id="68">68</span>
 <span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">core</span>::{<span class="ident">cell::UnsafeCell</span>, <span class="ident">fmt::Debug</span>};
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
   <span class="ident">keys</span>::{<span class="ident">Keys</span>, <span class="ident">KeysLowActive</span>},
   <span class="ident">video::color::Color</span>,
+  <span class="ident">interrupts::IrqBits</span>,
 };
 
 <span class="doccomment">/// A GbaCell holds a `Copy` value that&#39;s accessed in a single machine</span>
@@ -143,6 +146,7 @@
 
 <span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="ident">u32</span> {}
 <span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="ident">i32</span> {}
+<span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span>(<span class="ident">IrqBits</span>)<span class="op">&gt;</span> {}
 </code></pre></div>
 </section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="gba2k" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (5750a6aa2 2022-06-20)" ></div>
 </body></html>
