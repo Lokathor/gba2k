@@ -12,11 +12,7 @@ use gba2k::{
   },
 };
 
-/// This ends up in `bss`
 pub static THE_COLOR: GbaCell<Color> = GbaCell::new(Color::WHITE);
-
-/// This ends up in `data`
-pub static BAR: GbaCell<u32> = GbaCell::new(7);
 
 #[no_mangle]
 extern "C" fn main() -> ! {
