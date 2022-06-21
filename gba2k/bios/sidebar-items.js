@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["Halt","`swi 0x02`: Halts the CPU until an interrupt request occurs."],["IntrWait","`swi 0x04`: Performs an “interrupt wait”."],["Stop","`swi 0x03`"],["VBlankIntrWait","`swi 0x05`: Performs an “interrupt wait” for a new Vertical-blank Interrupt."]]});
