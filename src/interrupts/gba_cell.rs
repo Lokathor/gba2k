@@ -3,6 +3,7 @@ use core::{cell::UnsafeCell, fmt::Debug};
 use crate::{
   keys::{Keys, KeysLowActive},
   video::color::Color,
+  interrupts::IrqBits,
 };
 
 /// A GbaCell holds a `Copy` value that's accessed in a single machine
@@ -67,3 +68,4 @@ unsafe impl GbaCellSafe for KeysLowActive {}
 
 unsafe impl GbaCellSafe for u32 {}
 unsafe impl GbaCellSafe for i32 {}
+unsafe impl GbaCellSafe for Option<extern "C" fn(IrqBits)> {}
