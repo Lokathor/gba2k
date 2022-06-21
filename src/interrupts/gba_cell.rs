@@ -16,11 +16,11 @@ use crate::{
 /// accessed by both the main program as well as the interrupt handler.
 #[derive(Default)]
 #[repr(transparent)]
-pub struct GbaCell<T: Copy>(UnsafeCell<T>);
+pub struct GbaCell<T: GbaCellSafe>(UnsafeCell<T>);
 
 impl<T> Debug for GbaCell<T>
 where
-  T: Copy + Debug,
+  T: GbaCellSafe + Debug,
 {
   fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
     let s = self.read();
@@ -28,15 +28,14 @@ where
   }
 }
 
-unsafe impl<T: Copy> Send for GbaCell<T> {}
-unsafe impl<T: Copy> Sync for GbaCell<T> {}
+unsafe impl<T: GbaCellSafe> Send for GbaCell<T> {}
+unsafe impl<T: GbaCellSafe> Sync for GbaCell<T> {}
 
-impl<T: Copy> GbaCell<T> {
+impl<T: GbaCellSafe> GbaCell<T> {
   /// Makes a new cell.
-  pub const fn new(t: T) -> Self
-  where
-    T: GbaCellSafe,
-  {
+  #[inline]
+  #[must_use]
+  pub const fn new(t: T) -> Self {
     Self(UnsafeCell::new(t))
   }
   #[inline]
@@ -49,12 +48,13 @@ impl<T: Copy> GbaCell<T> {
     unsafe { self.0.get().write_volatile(t) }
   }
   #[inline]
+  #[must_use]
   pub fn get(&self) -> *mut T {
     self.0.get()
   }
 }
 
-pub unsafe trait GbaCellSafe {}
+pub unsafe trait GbaCellSafe: Copy {}
 
 unsafe impl GbaCellSafe for u8 {}
 unsafe impl GbaCellSafe for i8 {}
