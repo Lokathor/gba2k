@@ -1,6 +1,9 @@
 use core::{cell::UnsafeCell, fmt::Debug};
 
-use crate::{keys::Keys, rt0_rom_swp, rt0_rom_swpb, video::color::Color};
+use crate::{
+  keys::{Keys, KeysLowActive},
+  video::color::Color,
+};
 
 /// A GbaCell holds a `Copy` value that's accessed in a single machine
 /// instruction.
@@ -11,6 +14,7 @@ use crate::{keys::Keys, rt0_rom_swp, rt0_rom_swpb, video::color::Color};
 ///
 /// Use of the GbaCell type allows for safe mutable global data that can be
 /// accessed by both the main program as well as the interrupt handler.
+#[derive(Default)]
 #[repr(transparent)]
 pub struct GbaCell<T: Copy>(UnsafeCell<T>);
 
@@ -28,11 +32,11 @@ unsafe impl<T: Copy> Send for GbaCell<T> {}
 unsafe impl<T: Copy> Sync for GbaCell<T> {}
 
 impl<T: Copy> GbaCell<T> {
-  /// ## Safety
-  /// As per the type docs.
-  #[inline]
-  #[must_use]
-  pub const unsafe fn new_unchecked(t: T) -> Self {
+  /// Makes a new cell.
+  pub const fn new(t: T) -> Self
+  where
+    T: GbaCellSafe,
+  {
     Self(UnsafeCell::new(t))
   }
   #[inline]
@@ -44,68 +48,22 @@ impl<T: Copy> GbaCell<T> {
   pub fn write(&self, t: T) {
     unsafe { self.0.get().write_volatile(t) }
   }
-}
-
-impl GbaCell<i32> {
   #[inline]
-  #[must_use]
-  pub const fn new_i32(x: i32) -> Self {
-    Self(UnsafeCell::new(x))
-  }
-  #[inline]
-  pub fn swap(&self, x: i32) -> i32 {
-    unsafe { rt0_rom_swp(x as u32, self.0.get().cast()) as i32 }
+  pub fn get(&self) -> *mut T {
+    self.0.get()
   }
 }
 
-impl GbaCell<u32> {
-  #[inline]
-  #[must_use]
-  pub const fn new_u32(x: u32) -> Self {
-    Self(UnsafeCell::new(x))
-  }
-  #[inline]
-  pub fn swap(&self, x: u32) -> u32 {
-    unsafe { rt0_rom_swp(x, self.0.get()) }
-  }
-}
+pub unsafe trait GbaCellSafe {}
 
-impl GbaCell<Keys> {
-  #[inline]
-  #[must_use]
-  pub const fn new_keys(x: Keys) -> Self {
-    Self(UnsafeCell::new(x))
-  }
-}
+unsafe impl GbaCellSafe for u8 {}
+unsafe impl GbaCellSafe for i8 {}
 
-impl GbaCell<Color> {
-  #[inline]
-  #[must_use]
-  pub const fn new_color(x: Color) -> Self {
-    Self(UnsafeCell::new(x))
-  }
-}
+unsafe impl GbaCellSafe for u16 {}
+unsafe impl GbaCellSafe for i16 {}
+unsafe impl GbaCellSafe for Color {}
+unsafe impl GbaCellSafe for Keys {}
+unsafe impl GbaCellSafe for KeysLowActive {}
 
-impl GbaCell<i8> {
-  #[inline]
-  #[must_use]
-  pub const fn new_i8(x: i8) -> Self {
-    Self(UnsafeCell::new(x))
-  }
-  #[inline]
-  pub fn swap(&self, x: i8) -> i8 {
-    unsafe { rt0_rom_swpb(x as u8, self.0.get().cast()) as i8 }
-  }
-}
-
-impl GbaCell<u8> {
-  #[inline]
-  #[must_use]
-  pub const fn new_u8(x: u8) -> Self {
-    Self(UnsafeCell::new(x))
-  }
-  #[inline]
-  pub fn swap(&self, x: u8) -> u8 {
-    unsafe { rt0_rom_swpb(x, self.0.get()) }
-  }
-}
+unsafe impl GbaCellSafe for u32 {}
+unsafe impl GbaCellSafe for i32 {}

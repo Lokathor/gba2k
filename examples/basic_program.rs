@@ -13,10 +13,10 @@ use gba2k::{
 };
 
 /// This ends up in `bss`
-pub static THE_COLOR: GbaCell<Color> = GbaCell::new_color(Color::WHITE);
+pub static THE_COLOR: GbaCell<Color> = GbaCell::new(Color::WHITE);
 
 /// This ends up in `data`
-pub static BAR: GbaCell<u32> = GbaCell::new_u32(7);
+pub static BAR: GbaCell<u32> = GbaCell::new(7);
 
 #[no_mangle]
 extern "C" fn main() -> ! {
