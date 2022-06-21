@@ -2,10 +2,28 @@
 
 A GBA development project.
 
+## FAQ
+
+* **How does this relate to the `gba` crate?**
+
+Starting with the hard ones I see. Uh, so the story there is that I guess I've
+given up on trying develop the `gba` crate further. It's at a point where it has
+a non-zero number of users other than myself use it (at least enough for me to
+get bug reports), and I don't want to mess up what those people are doing, but I
+also thing that the organization of the crate needs a major overhaul.
+
+* **How do I do \[thing\] with this crate?**
+
+You probably can't yet! Currently the crate is very new, and quite limited.
+Rather than just adding a million things at once, I'm trying this time to add to
+the crate more slowly and carefully. Also, I usually only work on this when I'm
+avoiding my other project that I want to get done in 2022. So expect development
+to move quite slowly.
+
 ## System Setup
 
 There's a few steps of system setup that I did which need to be mentioned before
-you'll be able to build/use this respository.
+you'll be able to build/use this repository.
 
 ### Get mGBA
 
