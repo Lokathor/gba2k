@@ -24,6 +24,9 @@ jobs:
           profile: minimal
           default: true
       
+      - name: Install rust-src component
+        run: rustup component add rust-src
+      
       - name: Build The Docs
         run: cargo doc
 
