@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["VCOUNT",""]],"mod":[["color",""],["display_control",""],["display_status",""]]});
+window.SIDEBAR_ITEMS = {"constant":[["BACKDROP_COLOR",""],["BG_PALETTE",""],["DISPCNT",""],["DISPSTAT",""],["OBJ_PALETTE",""],["VCOUNT",""]],"enum":[["DisplayMode",""]],"fn":[["bg_palbank",""],["obj_palbank",""]],"struct":[["Color",""],["DisplayControl",""],["DisplayStatus",""]],"type":[["PalBank",""]]};

@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["BACKDROP_COLOR",""],["BG_PALETTE",""],["OBJ_PALETTE",""]],"fn":[["bg_palbank",""],["obj_palbank",""]],"struct":[["Color",""]],"type":[["PalBank",""]]});
