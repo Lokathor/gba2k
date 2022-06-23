@@ -1,4 +1,4 @@
-/// `swi 0x02`: Halts the CPU until an interrupt request occurs.
+/// `swi #0x02`: Halts the CPU until an interrupt request occurs.
 ///
 /// The CPU is placed into low-power mode, while other parts (video, sound,
 /// timers, serial, keypad) continue to operate. This mode only terminates when
