@@ -131,7 +131,7 @@
 
     push {r3, r12}
 
-    ldr lr, =1f
+    ldr lr, =1f       @changes lr_sys, leaving lr_svc safe
     bx r1
     1:
 
