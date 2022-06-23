@@ -1,4 +1,4 @@
-/// `swi 0x05`: Performs an "interrupt wait" for a new Vertical-blank
+/// `swi #0x05`: Performs an "interrupt wait" for a new Vertical-blank
 /// Interrupt.
 ///
 /// This is effectively just an alternate way to write
