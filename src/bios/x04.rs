@@ -1,6 +1,6 @@
 use crate::interrupts::IrqBits;
 
-/// `swi 0x04`: Performs an "interrupt wait".
+/// `swi #0x04`: Performs an "interrupt wait".
 ///
 /// This function:
 /// * Forces [`IME`](crate::interrupts::IME) to be enabled.
