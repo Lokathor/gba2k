@@ -1,6 +1,11 @@
-pub mod color;
-pub mod display_control;
-pub mod display_status;
+mod color;
+pub use color::*;
+
+mod display_control;
+pub use display_control::*;
+
+mod display_status;
+pub use display_status::*;
 
 use voladdress::*;
 pub const VCOUNT: VolAddress<u8, Safe, ()> =

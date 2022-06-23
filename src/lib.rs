@@ -31,7 +31,7 @@ mod bit_utils;
 
 pub mod bios;
 pub mod interrupts;
-pub mod keys;
+pub mod keyinput;
 pub mod video;
 
 #[panic_handler]
@@ -47,7 +47,7 @@ macro_rules! read_sp {
   () => {{
     let sp_output: u32;
     unsafe {
-      // * T32: `mov` between high and low regsiers doesn't set flags
+      // * T32: `mov` between high and low registers doesn't set flags
       // * A32: `mov` without `s` on the end doesn't set flags.
       core::arch::asm! {
         "mov {sp_val}, sp",
@@ -67,7 +67,7 @@ macro_rules! read_lr {
   () => {{
     let lr_output: u32;
     unsafe {
-      // * T32: `mov` between high and low regsiers doesn't set flags
+      // * T32: `mov` between high and low registers doesn't set flags
       // * A32: `mov` without `s` on the end doesn't set flags.
       core::arch::asm! {
         "mov {lr_val}, lr",
@@ -88,7 +88,7 @@ macro_rules! read_pc {
   () => {{
     let pc_output: u32;
     unsafe {
-      // * T32: `mov` between high and low regsiers doesn't set flags
+      // * T32: `mov` between high and low registers doesn't set flags
       // * A32: `mov` without `s` on the end doesn't set flags.
       core::arch::asm! {
         "mov {pc_val}, pc",

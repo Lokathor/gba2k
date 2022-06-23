@@ -1,9 +1,8 @@
 use core::{cell::UnsafeCell, fmt::Debug};
 
 use crate::{
-  keys::{Keys, KeysLowActive},
-  video::color::Color,
-  interrupts::IrqBits,
+  keyinput::{Keys, KeysLowActive},
+  video::Color,
 };
 
 /// A GbaCell holds a `Copy` value that's accessed in a single machine
@@ -68,4 +67,11 @@ unsafe impl GbaCellSafe for KeysLowActive {}
 
 unsafe impl GbaCellSafe for u32 {}
 unsafe impl GbaCellSafe for i32 {}
-unsafe impl GbaCellSafe for Option<extern "C" fn(IrqBits)> {}
+
+// Note(Lokathor): All `Option<fn>` types are GbaCellSafe, but I only want to
+// type so much at once. Feel free to add more impls here any time you need some
+// other `fn` type to be usable.
+unsafe impl GbaCellSafe for Option<extern "C" fn()> {}
+unsafe impl<A> GbaCellSafe for Option<extern "C" fn(A)> {}
+unsafe impl<A, B> GbaCellSafe for Option<extern "C" fn(A, B)> {}
+unsafe impl<A, B, C> GbaCellSafe for Option<extern "C" fn(A, B, C)> {}
