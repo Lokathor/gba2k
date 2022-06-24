@@ -24,12 +24,58 @@
 <span id="18">18</span>
 <span id="19">19</span>
 <span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
 </pre><pre class="rust"><code><span class="attribute">#![<span class="ident">allow</span>(<span class="ident">non_snake_case</span>)]</span>
 
+<span class="doccomment">//! The BIOS of the GBA provides some code that&#39;s built-in to the device.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! The BIOS performs a part of the hardware interrupt handling process (see the</span>
+<span class="doccomment">//! [`interrupts`](crate::interrupts) module), and it also performs the entire</span>
+<span class="doccomment">//! software interrupt handling process.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! A software interrupt is performed with the `swi` instruction. The important</span>
+<span class="doccomment">//! difference compared to calling a function with `bx` or `bl` is that a</span>
+<span class="doccomment">//! software interrupt has quite a bit more overhead to call. A standard</span>
+<span class="doccomment">//! function call costs ten cycles or less, while a software interrupt costs</span>
+<span class="doccomment">//! dozens of cycles.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! However, the BIOS functions don&#39;t take up any IWRAM or ROM space, so if the</span>
+<span class="doccomment">//! situation fits you might want to use them just to keep your program smaller.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Notably, the [`Halt`] function, and the other BIOS functions based on it,</span>
+<span class="doccomment">//! *cannot* be duplicated in user code. They use a special MMIO location that</span>
+<span class="doccomment">//! only accepts data when the CPU&#39;s program counter is in the BIOS region, so</span>
+<span class="doccomment">//! only the BIOS can do it. It&#39;s not necessary to ever use `Halt`, but it&#39;s</span>
+<span class="doccomment">//! friendly on the battery to let the CPU sleep as much as possible if you</span>
+<span class="doccomment">//! don&#39;t have anything else to do. Even if the user is using an emulator it</span>
+<span class="doccomment">//! saves them some energy to let the emulation skip the CPU computation.</span>
+
 <span class="comment">// Note(Lokathor): Most all the functions here should ideally have some</span>
-<span class="comment">// extensive docs on them. To keep things easy to edit, we&#39;re going to put each</span>
-<span class="comment">// individual function in its own file. The sub-modules will each be named after</span>
-<span class="comment">// the `swi` number of the function.</span>
+<span class="comment">// extensive docs on them. To keep things consistent and easy to edit, we&#39;re</span>
+<span class="comment">// going to put each individual function in its own file. For simplicity, each</span>
+<span class="comment">// sub-module will be named after the `swi` number of the function.</span>
 
 <span class="kw">mod</span> <span class="ident">x02</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">x02</span>::<span class="kw-2">*</span>;
@@ -45,5 +91,5 @@
 
 <span class="comment">// Note(Lokathor): 0x2A is the highest SWI on the GBA.</span>
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="gba2k" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (10f4ce324 2022-06-22)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="gba2k" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (43347397f 2022-06-23)" ></div>
 </body></html>
