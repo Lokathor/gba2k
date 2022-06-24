@@ -19,7 +19,7 @@
 //! *cannot* be duplicated in user code. They use a special MMIO location that
 //! only accepts data when the CPU's program counter is in the BIOS region, so
 //! only the BIOS can do it. It's not necessary to ever use `Halt`, but it's
-//! friendly on the battery to let the CPU sleep as much as possible if you
+//! friendly on the battery to let the CPU pause as much as possible if you
 //! don't have anything else to do. Even if the user is using an emulator it
 //! saves them some energy to let the emulation skip the CPU computation.
 
