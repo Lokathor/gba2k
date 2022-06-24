@@ -14,5 +14,5 @@ impl DisplayStatus {
   u16_bool_field!(3, vblank_irq, with_vblank_irq);
   u16_bool_field!(4, hblank_irq, with_hblank_irq);
   u16_bool_field!(5, vcounter_irq, with_vcounter_irq);
-  unsafe_u16_val_field!(8 - 15, vcounter, with_vcounter);
+  u16_val_field!(8 - 15, vcounter, with_vcounter);
 }

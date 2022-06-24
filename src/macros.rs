@@ -27,7 +27,7 @@ macro_rules! unsafe_u16_enum_field {
   };
 }
 
-macro_rules! unsafe_u16_val_field {
+macro_rules! u16_val_field {
   ($low:literal - $high:literal, $get_name:ident, $with_name: ident) => {
     #[inline]
     #[must_use]
@@ -38,6 +38,21 @@ macro_rules! unsafe_u16_val_field {
     #[must_use]
     pub const fn $with_name(self, val: u16) -> Self {
       Self(crate::bit_utils::u16_with_value::<$low, $high>(self.0, val))
+    }
+  };
+}
+
+macro_rules! u32_val_field {
+  ($low:literal - $high:literal, $get_name:ident, $with_name: ident) => {
+    #[inline]
+    #[must_use]
+    pub const fn $get_name(self) -> u32 {
+      crate::bit_utils::u32_get_value::<$low, $high>(self.0)
+    }
+    #[inline]
+    #[must_use]
+    pub const fn $with_name(self, val: u32) -> Self {
+      Self(crate::bit_utils::u32_with_value::<$low, $high>(self.0, val))
     }
   };
 }
@@ -53,6 +68,21 @@ macro_rules! u16_bool_field {
     #[must_use]
     pub const fn $with_name(self, val: bool) -> Self {
       Self(crate::bit_utils::u16_with_bit::<$bit>(self.0, val))
+    }
+  };
+}
+
+macro_rules! u32_bool_field {
+  ($bit:literal, $get_name:ident, $with_name: ident) => {
+    #[inline]
+    #[must_use]
+    pub const fn $get_name(self) -> bool {
+      crate::bit_utils::u32_get_bit::<$bit>(self.0)
+    }
+    #[inline]
+    #[must_use]
+    pub const fn $with_name(self, val: bool) -> Self {
+      Self(crate::bit_utils::u32_with_bit::<$bit>(self.0, val))
     }
   };
 }

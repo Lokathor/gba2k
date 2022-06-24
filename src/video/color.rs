@@ -10,9 +10,9 @@ impl Color {
   pub const WHITE: Self = Self(0b11111_11111_11111);
 
   pub_const_fn_new!();
-  unsafe_u16_val_field!(0 - 4, red, with_red);
-  unsafe_u16_val_field!(5 - 9, green, with_green);
-  unsafe_u16_val_field!(10 - 14, blue, with_blue);
+  u16_val_field!(0 - 4, red, with_red);
+  u16_val_field!(5 - 9, green, with_green);
+  u16_val_field!(10 - 14, blue, with_blue);
 }
 
 impl From<u16> for Color {
