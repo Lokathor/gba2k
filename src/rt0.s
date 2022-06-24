@@ -100,27 +100,23 @@
     add r12, r0, #0x208 @r12=&IME
     mov r3, #0
     swp r3, r3, [r12]   @IME swap off
-    @ still important, r3, r12
 
     read_update_hardware_flags:
     ldr r0, [r12, #-8]      @r0=IE_IF
     and r0, r0, r0, LSR #16 @r0=IE&IF
     strh r0, [r12, #-6]     @IF=r0
-    @ still important, r0, r3, r12
 
     read_update_bios_flags:
-    sub  r2, r12, #(0x208+8)    @r2=&BIOS_IW
-    ldrh r1, [r2]           @r1=BIOS_IW
-    orr  r1, r1, r0         @r1=r1|r0
-    strh r1, [r2]           @BIOS_IW=r0
-    @ still important, r0, r3, r12
+    sub  r2, r12, #(0x208+8) @r2=&BIOS_IW
+    ldrh r1, [r2]            @r1=BIOS_IW
+    orr  r1, r1, r0          @r1=r1|r0
+    strh r1, [r2]            @BIOS_IW=r0
 
     get_rust_fn_ptr:
     ldr r1, =RUST_IRQ_HANDLER
     ldr r1, [r1]       @r1==RUST_IRQ_HANDLER
     cmp r1, #0         @if r1==0
     beq end_of_rt0     @then branch
-    @ still important, r0, r1, r3, r12
 
     call_rust_fn_in_sys_mode:
     mrs r2, SPSR      @save SPSR
@@ -129,13 +125,19 @@
     mov r2, #0b00011111
     msr CPSR_cf, r2   @SYS mode
 
-    push {r3, r12}
+    /* Pushing r2 is useless here, but we just need to push an even total number
+    of registers. We want to keep, at minimum, r3 and lr. Also, it would be nice
+    to store r12. We could just rebuild r12 after the call, but that takes about
+    as much time as just pushing two extra registers. This means we need one
+    extra register to have an even number, and so I picked r2.
+    */
+    push {r2, r3, r12, lr} 
 
-    ldr lr, =1f       @changes lr_sys, leaving lr_svc safe
+    ldr lr, =1f
     bx r1
     1:
 
-    pop {r3, r12}
+    pop {r2, r3, r12, lr}
 
     mov r2, #0b10010010
     msr CPSR_cf, r2   @SVC mode
@@ -145,6 +147,8 @@
     @ still important, r3, r12
 
     end_of_rt0:
+    mov r12, #0x04000000
+    add r12, r12, #0x208
     swp r3, r3, [r12]  @IME swap previous
     bx lr              @return
 .previous
