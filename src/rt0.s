@@ -74,19 +74,22 @@
   end_of_init_code:
 .previous
 
-.section .text.single_instructions
-  .align 4
+.section .text.single_instructions.swp
   /*
   unsafe extern "C" fn rt0_rom_swp(new_val: u32, addr: *mut u32) -> u32
   */
+  .align 4
   .global rt0_rom_swp
   rt0_rom_swp:
     swp r0, r0, [r1]
     bx lr
-  
+.previous
+
+.section .text.single_instruction.swpb
   /*
   unsafe extern "C" fn rt0_rom_swpb(new_val: u8, addr: *mut u8) -> u8
   */
+  .align 4
   .global rt0_rom_swpb
   rt0_rom_swpb:
     swpb r0, r0, [r1]
