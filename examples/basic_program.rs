@@ -4,7 +4,7 @@
 use gba2k::{
   bios::VBlankIntrWait,
   interrupts::{GbaCell, IrqBits, IE, IME},
-  keyinput::KEYINPUT,
+  keys::KEYINPUT,
   rt0::set_rust_irq_handler,
   video::{
     Color, DisplayControl, DisplayStatus, BACKDROP_COLOR, DISPCNT, DISPSTAT,

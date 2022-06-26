@@ -1,7 +1,7 @@
 use core::{cell::UnsafeCell, fmt::Debug};
 
 use crate::{
-  keyinput::{Keys, KeysLowActive},
+  keys::{Keys, KeysLowActive},
   video::Color,
 };
 

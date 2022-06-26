@@ -21,7 +21,7 @@ mod bit_utils;
 
 pub mod bios;
 pub mod interrupts;
-pub mod keyinput;
+pub mod keys;
 pub mod rt0;
 pub mod video;
 
