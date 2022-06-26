@@ -81,7 +81,7 @@
     bx lr
 .previous
 
-.section .text.single_instruction.swpb
+.section .text.single_instructions.swpb
   /*
   unsafe extern "C" fn rt0_rom_swpb(new_val: u8, addr: *mut u8) -> u8
   */
