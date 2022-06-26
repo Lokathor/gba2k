@@ -10,14 +10,6 @@ pub const IME: VolAddress<bool, Safe, Safe> =
 mod gba_cell;
 pub use gba_cell::*;
 
-extern "C" {
-  static RUST_IRQ_HANDLER: GbaCell<Option<extern "C" fn(IrqBits)>>;
-}
-#[inline]
-pub fn set_rust_irq_handler(opt_f: Option<extern "C" fn(IrqBits)>) {
-  unsafe { RUST_IRQ_HANDLER.write(opt_f) };
-}
-
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)]
 pub struct IrqBits(pub(crate) u16);

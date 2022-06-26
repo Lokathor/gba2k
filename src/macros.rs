@@ -1,3 +1,64 @@
+/// Inline assembly to read the stack pointer value.
+///
+/// The stack pointer doesn't usually move by much on the GBA.
+#[macro_export]
+macro_rules! read_sp {
+  () => {{
+    let sp_output: u32;
+    unsafe {
+      // * T32: `mov` between high and low registers doesn't set flags
+      // * A32: `mov` without `s` on the end doesn't set flags.
+      core::arch::asm! {
+        "mov {sp_val}, sp",
+        sp_val = out(reg) sp_output,
+        options(nomem, nostack, preserves_flags)
+      }
+    }
+    sp_output
+  }};
+}
+
+/// Inline assembly to read the link register value.
+///
+/// This is the "return address" of the current function.
+#[macro_export]
+macro_rules! read_lr {
+  () => {{
+    let lr_output: u32;
+    unsafe {
+      // * T32: `mov` between high and low registers doesn't set flags
+      // * A32: `mov` without `s` on the end doesn't set flags.
+      core::arch::asm! {
+        "mov {lr_val}, lr",
+        lr_val = out(reg) lr_output,
+        options(nomem, nostack, preserves_flags)
+      }
+    }
+    lr_output
+  }};
+}
+
+/// Inline assembly to read the program counter value.
+///
+/// Because of the CPU's pipeline, the program counter will hold the address of
+/// the instruction that's *two* instructions ahead of the current instruction.
+#[macro_export]
+macro_rules! read_pc {
+  () => {{
+    let pc_output: u32;
+    unsafe {
+      // * T32: `mov` between high and low registers doesn't set flags
+      // * A32: `mov` without `s` on the end doesn't set flags.
+      core::arch::asm! {
+        "mov {pc_val}, pc",
+        pc_val = out(reg) pc_output,
+        options(nomem, nostack, preserves_flags)
+      }
+    }
+    pc_output
+  }};
+}
+
 macro_rules! pub_const_fn_new {
   () => {
     #[inline]
