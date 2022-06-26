@@ -28,8 +28,6 @@
 <span id="22">22</span>
 <span id="23">23</span>
 <span id="24">24</span>
-<span id="25">25</span>
-<span id="26">26</span>
 </pre><pre class="rust"><code><span class="doccomment">/// `swi #0x02`: Halts the CPU until an interrupt request occurs.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The CPU is placed into low-power mode, while other parts (video, sound,</span>
@@ -45,13 +43,11 @@
 <span class="attribute">#[<span class="ident">inline</span>]</span>
 <span class="attribute">#[<span class="ident">instruction_set</span>(<span class="ident">arm::t32</span>)]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">Halt</span>() {
-  <span class="comment">// TODO: I&#39;m 99% sure this doesn&#39;t trash any registers at all.</span>
+  <span class="comment">// Note(Lokathor): I checked and double checked, `Halt` doesn&#39;t trash any of</span>
+  <span class="comment">// the registers.</span>
   <span class="kw">unsafe</span> {
     <span class="macro">core::arch::asm!</span> {
       <span class="string">&quot;swi #0x02&quot;</span>,
-      <span class="ident">out</span>(<span class="string">&quot;r0&quot;</span>) <span class="kw">_</span>,
-      <span class="ident">out</span>(<span class="string">&quot;r1&quot;</span>) <span class="kw">_</span>,
-      <span class="ident">out</span>(<span class="string">&quot;r3&quot;</span>) <span class="kw">_</span>,
       <span class="ident">options</span>(<span class="ident">preserves_flags</span>)
     }
   }
