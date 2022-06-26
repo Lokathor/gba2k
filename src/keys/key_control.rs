@@ -14,6 +14,10 @@ pub const KEYCNT: VolAddress<KeyControl, Safe, Safe> =
 /// If you set the `all_required` field then **all** keys must be pressed at the
 /// same time to trigger the interrupt. Otherwise **any** selected key can
 /// trigger the interrupt.
+///
+/// They key interrupt is advised only for breaking out of the low-power
+/// [`Halt`](crate::bios::Halt) state. You should not use it as a way to read
+/// regular user input.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)]
 pub struct KeyControl(u16);

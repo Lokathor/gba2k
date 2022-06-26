@@ -1,8 +1,10 @@
 /// `swi #0x02`: Halts the CPU until an interrupt request occurs.
 ///
 /// The CPU is placed into low-power mode, while other parts (video, sound,
-/// timers, serial, keypad) continue to operate. This mode only terminates when
-/// one of the interrupts set in [`IE`](crate::interrupts::IE) occurs.
+/// timers, serial, keypad) continue to operate.
+///
+/// This low-power mode only terminates when one of the interrupts set in
+/// [`IE`](crate::interrupts::IE) occurs.
 ///
 /// If [`IME`](crate::interrupts::IME) is set then the interrupt handler will be
 /// called when the CPU wakes and before this function returns. Otherwise the
