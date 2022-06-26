@@ -74,7 +74,7 @@
   /*
   unsafe extern "C" fn rt0_rom_swp(new_val: u32, addr: *mut u32) -> u32
   */
-  .align 4
+  .balign 4
   .global rt0_rom_swp
   rt0_rom_swp:
     swp r0, r0, [r1]
@@ -85,7 +85,7 @@
   /*
   unsafe extern "C" fn rt0_rom_swpb(new_val: u8, addr: *mut u8) -> u8
   */
-  .align 4
+  .balign 4
   .global rt0_rom_swpb
   rt0_rom_swpb:
     swpb r0, r0, [r1]
@@ -93,7 +93,7 @@
 .previous
 
 .section .iwram.rt0_irq_handler
-  .align 4
+  .balign 4
   rt0_irq_handler:
     handle_irq_with_interrupts_off:
     add r12, r0, #0x208 @r12=&IME
@@ -174,7 +174,7 @@
 .previous
 
 .section .bss.rust_irq_handler_fn_ptr
-  .align 4
+  .balign 4
   .global RUST_IRQ_HANDLER
   /* RUST_IRQ_HANDLER: Option<extern "C" fn(IrqBits)> = None; */
   RUST_IRQ_HANDLER:
