@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["set_rust_irq_handler","Sets the rust function to run when a hardware interrupt occurs."],["text_single_swp","A `swp` instruction, stored in the `.text` section."],["text_single_swpb","A `swpb` instruction, stored in the `.text` section."]]};

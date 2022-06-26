@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/keyinput/keys.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>keys.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../gba2k/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/keys/key_control.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>key_control.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../gba2k/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
         </a><h2 class="location"></h2>
     </nav>
     <nav class="sidebar"><a class="sidebar-logo" href="../../../gba2k/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
@@ -39,17 +39,27 @@
 <span id="33">33</span>
 <span id="34">34</span>
 <span id="35">35</span>
-<span id="36">36</span>
-<span id="37">37</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::KeysLowActive</span>;
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">voladdress</span>::<span class="kw-2">*</span>;
 
+<span class="doccomment">/// Key interrupt control.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// See [KeyControl].</span>
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">KEYCNT</span>: <span class="ident">VolAddress</span><span class="op">&lt;</span><span class="ident">KeyControl</span>, <span class="ident">Safe</span>, <span class="ident">Safe</span><span class="op">&gt;</span> <span class="op">=</span>
+  <span class="kw">unsafe</span> { <span class="ident">VolAddress::new</span>(<span class="number">0x0400_0000</span>) };
+
+<span class="doccomment">/// Configures when the keypad should send an interrupt.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// If you&#39;d like an interrupt when a certain keypress happens, set the</span>
+<span class="doccomment">/// appropriate buttons as well as the `irq_enable` field.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// If you set the `all_required` field then **all** keys must be pressed at the</span>
+<span class="doccomment">/// same time to trigger the interrupt. Otherwise **any** selected key can</span>
+<span class="doccomment">/// trigger the interrupt.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Default</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>, <span class="ident">Hash</span>)]</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">transparent</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Keys</span>(<span class="ident">u16</span>);
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">KeyControl</span>(<span class="ident">u16</span>);
 
-<span class="macro">impl_bitops_for!</span>(<span class="ident">Keys</span>);
-
-<span class="kw">impl</span> <span class="ident">Keys</span> {
+<span class="kw">impl</span> <span class="ident">KeyControl</span> {
   <span class="macro">pub_const_fn_new!</span>();
   <span class="macro">u16_bool_field!</span>(<span class="number">0</span>, <span class="ident">a</span>, <span class="ident">with_a</span>);
   <span class="macro">u16_bool_field!</span>(<span class="number">1</span>, <span class="ident">b</span>, <span class="ident">with_b</span>);
@@ -61,22 +71,8 @@
   <span class="macro">u16_bool_field!</span>(<span class="number">7</span>, <span class="ident">down</span>, <span class="ident">with_down</span>);
   <span class="macro">u16_bool_field!</span>(<span class="number">8</span>, <span class="ident">r</span>, <span class="ident">with_r</span>);
   <span class="macro">u16_bool_field!</span>(<span class="number">9</span>, <span class="ident">l</span>, <span class="ident">with_l</span>);
-}
-
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">KeysLowActive</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Keys</span> {
-  <span class="attribute">#[<span class="ident">inline</span>]</span>
-  <span class="attribute">#[<span class="ident">must_use</span>]</span>
-  <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">low</span>: <span class="ident">KeysLowActive</span>) -&gt; <span class="self">Self</span> {
-    <span class="self">Self</span>(<span class="ident">u16::from</span>(<span class="ident">low</span>) <span class="op">^</span> <span class="number">0b11_1111_1111</span>)
-  }
-}
-
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Keys</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">u16</span> {
-  <span class="attribute">#[<span class="ident">inline</span>]</span>
-  <span class="attribute">#[<span class="ident">must_use</span>]</span>
-  <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">k</span>: <span class="ident">Keys</span>) -&gt; <span class="self">Self</span> {
-    <span class="ident">k</span>.<span class="number">0</span>
-  }
+  <span class="macro">u16_bool_field!</span>(<span class="number">14</span>, <span class="ident">irq_enable</span>, <span class="ident">with_irq_enable</span>);
+  <span class="macro">u16_bool_field!</span>(<span class="number">15</span>, <span class="ident">all_required</span>, <span class="ident">with_all_required</span>);
 }
 </code></pre></div>
 </section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="gba2k" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (20a6f3a8a 2022-06-25)" ></div>

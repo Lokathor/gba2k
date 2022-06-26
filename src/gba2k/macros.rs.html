@@ -149,10 +149,144 @@
 <span id="143">143</span>
 <span id="144">144</span>
 <span id="145">145</span>
-</pre><pre class="rust"><code><span class="macro">macro_rules!</span> <span class="ident">pub_const_fn_new</span> {
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+</pre><pre class="rust"><code><span class="doccomment">/// Inline assembly to read the stack pointer value.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The stack pointer doesn&#39;t usually move by much on the GBA.</span>
+<span class="attribute">#[<span class="ident">macro_export</span>]</span>
+<span class="macro">macro_rules!</span> <span class="ident">read_sp</span> {
+  () =&gt; {{
+    <span class="kw">let</span> <span class="ident">sp_output</span>: <span class="ident">u32</span>;
+    <span class="kw">unsafe</span> {
+      <span class="comment">// * T32: `mov` between high and low registers doesn&#39;t set flags</span>
+      <span class="comment">// * A32: `mov` without `s` on the end doesn&#39;t set flags.</span>
+      <span class="macro">core::arch::asm!</span> {
+        <span class="string">&quot;mov {sp_val}, sp&quot;</span>,
+        <span class="ident">sp_val</span> <span class="op">=</span> <span class="ident">out</span>(<span class="ident">reg</span>) <span class="ident">sp_output</span>,
+        <span class="ident">options</span>(<span class="ident">nomem</span>, <span class="ident">nostack</span>, <span class="ident">preserves_flags</span>)
+      }
+    }
+    <span class="ident">sp_output</span>
+  }};
+}
+
+<span class="doccomment">/// Inline assembly to read the link register value.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// This is the &quot;return address&quot; of the current function.</span>
+<span class="attribute">#[<span class="ident">macro_export</span>]</span>
+<span class="macro">macro_rules!</span> <span class="ident">read_lr</span> {
+  () =&gt; {{
+    <span class="kw">let</span> <span class="ident">lr_output</span>: <span class="ident">u32</span>;
+    <span class="kw">unsafe</span> {
+      <span class="comment">// * T32: `mov` between high and low registers doesn&#39;t set flags</span>
+      <span class="comment">// * A32: `mov` without `s` on the end doesn&#39;t set flags.</span>
+      <span class="macro">core::arch::asm!</span> {
+        <span class="string">&quot;mov {lr_val}, lr&quot;</span>,
+        <span class="ident">lr_val</span> <span class="op">=</span> <span class="ident">out</span>(<span class="ident">reg</span>) <span class="ident">lr_output</span>,
+        <span class="ident">options</span>(<span class="ident">nomem</span>, <span class="ident">nostack</span>, <span class="ident">preserves_flags</span>)
+      }
+    }
+    <span class="ident">lr_output</span>
+  }};
+}
+
+<span class="doccomment">/// Inline assembly to read the program counter value.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Because of the CPU&#39;s pipeline, the program counter will hold the address of</span>
+<span class="doccomment">/// the instruction that&#39;s *two* instructions ahead of the current instruction.</span>
+<span class="attribute">#[<span class="ident">macro_export</span>]</span>
+<span class="macro">macro_rules!</span> <span class="ident">read_pc</span> {
+  () =&gt; {{
+    <span class="kw">let</span> <span class="ident">pc_output</span>: <span class="ident">u32</span>;
+    <span class="kw">unsafe</span> {
+      <span class="comment">// * T32: `mov` between high and low registers doesn&#39;t set flags</span>
+      <span class="comment">// * A32: `mov` without `s` on the end doesn&#39;t set flags.</span>
+      <span class="macro">core::arch::asm!</span> {
+        <span class="string">&quot;mov {pc_val}, pc&quot;</span>,
+        <span class="ident">pc_val</span> <span class="op">=</span> <span class="ident">out</span>(<span class="ident">reg</span>) <span class="ident">pc_output</span>,
+        <span class="ident">options</span>(<span class="ident">nomem</span>, <span class="ident">nostack</span>, <span class="ident">preserves_flags</span>)
+      }
+    }
+    <span class="ident">pc_output</span>
+  }};
+}
+
+<span class="macro">macro_rules!</span> <span class="ident">pub_const_fn_new</span> {
   () =&gt; {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="self">Self</span> {
       <span class="self">Self</span>(<span class="number">0</span>)
     }
@@ -163,6 +297,7 @@
   (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>:<span class="ident">literal</span> <span class="op">-</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span>:<span class="ident">literal</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">enum_ty</span>:<span class="ident">ty</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">get_name</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_name</span>: <span class="ident">ident</span>) =&gt; {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">get_name</span>(<span class="self">self</span>) -&gt; <span class="macro-nonterminal">$</span><span class="macro-nonterminal">enum_ty</span> {
       <span class="kw">unsafe</span> {
         <span class="ident">core::mem::transmute</span>(<span class="ident"><span class="kw">crate</span>::bit_utils::u16_get_region</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span><span class="op">&gt;</span>(
@@ -172,6 +307,7 @@
     }
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_name</span>(<span class="self">self</span>, <span class="ident">val</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">enum_ty</span>) -&gt; <span class="self">Self</span> {
       <span class="self">Self</span>(<span class="ident"><span class="kw">crate</span>::bit_utils::u16_with_region</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">val</span> <span class="kw">as</span> <span class="ident">u16</span>))
     }
@@ -182,11 +318,13 @@
   (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>:<span class="ident">literal</span> <span class="op">-</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span>:<span class="ident">literal</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">get_name</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_name</span>: <span class="ident">ident</span>) =&gt; {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">get_name</span>(<span class="self">self</span>) -&gt; <span class="ident">u16</span> {
       <span class="ident"><span class="kw">crate</span>::bit_utils::u16_get_value</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>)
     }
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_name</span>(<span class="self">self</span>, <span class="ident">val</span>: <span class="ident">u16</span>) -&gt; <span class="self">Self</span> {
       <span class="self">Self</span>(<span class="ident"><span class="kw">crate</span>::bit_utils::u16_with_value</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">val</span>))
     }
@@ -197,11 +335,13 @@
   (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>:<span class="ident">literal</span> <span class="op">-</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span>:<span class="ident">literal</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">get_name</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_name</span>: <span class="ident">ident</span>) =&gt; {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">get_name</span>(<span class="self">self</span>) -&gt; <span class="ident">u32</span> {
       <span class="ident"><span class="kw">crate</span>::bit_utils::u32_get_value</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>)
     }
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_name</span>(<span class="self">self</span>, <span class="ident">val</span>: <span class="ident">u32</span>) -&gt; <span class="self">Self</span> {
       <span class="self">Self</span>(<span class="ident"><span class="kw">crate</span>::bit_utils::u32_with_value</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">val</span>))
     }
@@ -212,11 +352,13 @@
   (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span>:<span class="ident">literal</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">get_name</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_name</span>: <span class="ident">ident</span>) =&gt; {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">get_name</span>(<span class="self">self</span>) -&gt; <span class="ident">bool</span> {
       <span class="ident"><span class="kw">crate</span>::bit_utils::u16_get_bit</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>)
     }
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_name</span>(<span class="self">self</span>, <span class="ident">val</span>: <span class="ident">bool</span>) -&gt; <span class="self">Self</span> {
       <span class="self">Self</span>(<span class="ident"><span class="kw">crate</span>::bit_utils::u16_with_bit</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">val</span>))
     }
@@ -227,11 +369,13 @@
   (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span>:<span class="ident">literal</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">get_name</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_name</span>: <span class="ident">ident</span>) =&gt; {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">get_name</span>(<span class="self">self</span>) -&gt; <span class="ident">bool</span> {
       <span class="ident"><span class="kw">crate</span>::bit_utils::u32_get_bit</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>)
     }
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_name</span>(<span class="self">self</span>, <span class="ident">val</span>: <span class="ident">bool</span>) -&gt; <span class="self">Self</span> {
       <span class="self">Self</span>(<span class="ident"><span class="kw">crate</span>::bit_utils::u32_with_bit</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">val</span>))
     }
