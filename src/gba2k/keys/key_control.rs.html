@@ -39,6 +39,10 @@
 <span id="33">33</span>
 <span id="34">34</span>
 <span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">voladdress</span>::<span class="kw-2">*</span>;
 
 <span class="doccomment">/// Key interrupt control.</span>
@@ -55,6 +59,10 @@
 <span class="doccomment">/// If you set the `all_required` field then **all** keys must be pressed at the</span>
 <span class="doccomment">/// same time to trigger the interrupt. Otherwise **any** selected key can</span>
 <span class="doccomment">/// trigger the interrupt.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// They key interrupt is advised only for breaking out of the low-power</span>
+<span class="doccomment">/// [`Halt`](crate::bios::Halt) state. You should not use it as a way to read</span>
+<span class="doccomment">/// regular user input.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Default</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>, <span class="ident">Hash</span>)]</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">transparent</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">KeyControl</span>(<span class="ident">u16</span>);
