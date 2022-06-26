@@ -13,13 +13,11 @@
 #[inline]
 #[instruction_set(arm::t32)]
 pub fn Halt() {
-  // TODO: I'm 99% sure this doesn't trash any registers at all.
+  // Note(Lokathor): I checked and double checked, `Halt` doesn't trash any of
+  // the registers.
   unsafe {
     core::arch::asm! {
       "swi #0x02",
-      out("r0") _,
-      out("r1") _,
-      out("r3") _,
       options(preserves_flags)
     }
   }
