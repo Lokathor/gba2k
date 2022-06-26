@@ -31,6 +31,7 @@ SECTIONS {
     __iwram_end = ABSOLUTE(.);
   } >iwram AT>rom = 0xff
 
+  . = ALIGN(4);
   __bss_position_in_rom = .;
   .bss : {
     __bss_start = ABSOLUTE(.);
@@ -40,6 +41,9 @@ SECTIONS {
 
     __bss_end = ABSOLUTE(.);
   } >iwram
+
+  __iwram_word_copy_count = (__iwram_end - __iwram_start) / 4;
+  __bss_word_clear_count = (__bss_end - __bss_start) / 4;
 
   /* debugging sections */
   /* Stabs */
