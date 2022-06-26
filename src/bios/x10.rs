@@ -45,7 +45,7 @@ impl BitUnpackOffset {
 ///   high bits.
 /// * The unpacking info supplies an "offset" value which is added to all source
 ///   elements with a non-zero value. The unpack info can also specify for the
-///   offset to be added to source elements /// that are zero. This creates a
+///   offset to be added to source elements that are zero. This creates a
 ///   destination element.
 /// * Each destination element is 1, 2, 4, 8, 16, or 32 bits big. When
 ///   destination elements are less than 32 bits each they're placed into the
