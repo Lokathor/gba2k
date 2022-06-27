@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["Mode3",""],["Scanlines",""]],"type":[["ColorAddress",""],["Scanline",""]]};
