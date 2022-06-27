@@ -1,7 +1,14 @@
+/// The GBA has RGB color with 5 bits per channel ("RGB555").
+///
+/// The bits of a color are packed into a `u16`, with the top bit being ignored:
+/// ```txt
+/// 0bX_BBBBB_GGGGG_RRRRR
+/// ```
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)]
 pub struct Color(u16);
 
+#[allow(missing_docs)]
 impl Color {
   pub const WHITE: Self = Self(0b11111_11111_11111);
   pub const BLACK: Self = Self(0);
