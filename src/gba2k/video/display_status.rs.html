@@ -22,10 +22,42 @@
 <span id="16">16</span>
 <span id="17">17</span>
 <span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">voladdress</span>::<span class="kw-2">*</span>;
+
+<span class="doccomment">/// &quot;Display Status&quot;</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">DISPSTAT</span>: <span class="ident">VolAddress</span><span class="op">&lt;</span><span class="ident">DisplayStatus</span>, <span class="ident">Safe</span>, <span class="ident">Safe</span><span class="op">&gt;</span> <span class="op">=</span>
   <span class="kw">unsafe</span> { <span class="ident">VolAddress::new</span>(<span class="number">0x0400_0004</span>) };
 
+<span class="doccomment">/// The display status lets you get info about the display and configure display</span>
+<span class="doccomment">/// interrupts.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// You can determine if the display is currently in v-blank, h-blank, or if the</span>
+<span class="doccomment">/// current [`VCOUNT`] value matches the vertical counter setting you&#39;ve</span>
+<span class="doccomment">/// assigned to the display status. These are read-only, and they&#39;re ignored by</span>
+<span class="doccomment">/// the hardware when you write a `DisplayStatus` value to `DISPSTAT`.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// You can set if you want an interrupt to be sent when each of the above</span>
+<span class="doccomment">/// states (v-blank, h-blank, v-match) becomes true. Remember that for an</span>
+<span class="doccomment">/// interrupt to occur you have to also enable the interrupt to be received in</span>
+<span class="doccomment">/// [`IE`] and you have to have [`IME`] enabled.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Finally, you can set what vertical counter value you watch to match on.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Default</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>, <span class="ident">Hash</span>)]</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">transparent</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DisplayStatus</span>(<span class="ident">u16</span>);

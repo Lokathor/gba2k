@@ -77,16 +77,23 @@
 <span id="71">71</span>
 <span id="72">72</span>
 <span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">core</span>::{<span class="ident">cell::UnsafeCell</span>, <span class="ident">fmt::Debug</span>};
 
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">keys::KeyInput</span>, <span class="ident">video::Color</span>};
 
-<span class="doccomment">/// A GbaCell holds a `Copy` value that&#39;s accessed in a single machine</span>
-<span class="doccomment">/// instruction.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// This means that the type must be 1, 2, or 4 bytes, and it must either be a</span>
-<span class="doccomment">/// primitive type or a single-field `repr(transparent)` struct over such a</span>
-<span class="doccomment">/// type.</span>
+<span class="doccomment">/// A GbaCell holds a value that&#39;s accessed in a single machine instruction.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Use of the GbaCell type allows for safe mutable global data that can be</span>
 <span class="doccomment">/// accessed by both the main program as well as the interrupt handler.</span>
@@ -114,15 +121,22 @@
   <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">t</span>: <span class="ident">T</span>) -&gt; <span class="self">Self</span> {
     <span class="self">Self</span>(<span class="ident">UnsafeCell::new</span>(<span class="ident">t</span>))
   }
+  <span class="doccomment">/// Reads the current value.</span>
   <span class="attribute">#[<span class="ident">inline</span>]</span>
   <span class="attribute">#[<span class="ident">must_use</span>]</span>
   <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">T</span> {
     <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="number">0</span>.<span class="ident">get</span>().<span class="ident">read_volatile</span>() }
   }
+  <span class="doccomment">/// Writes a new value.</span>
   <span class="attribute">#[<span class="ident">inline</span>]</span>
   <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">t</span>: <span class="ident">T</span>) {
     <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="number">0</span>.<span class="ident">get</span>().<span class="ident">write_volatile</span>(<span class="ident">t</span>) }
   }
+  <span class="doccomment">/// Gets the raw pointer to the value.</span>
+  <span class="doccomment">///</span>
+  <span class="doccomment">/// ## Safety</span>
+  <span class="doccomment">/// A `GbaCell` is an [UnsafeCell] internally, and so this raw pointer must</span>
+  <span class="doccomment">/// follow all the usuall &quot;pointer into an UnsafeCell&quot; rules.</span>
   <span class="attribute">#[<span class="ident">inline</span>]</span>
   <span class="attribute">#[<span class="ident">must_use</span>]</span>
   <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">*mut</span> <span class="ident">T</span> {
@@ -130,6 +144,12 @@
   }
 }
 
+<span class="doccomment">/// Marker trait for all types that will safely work with a [GbaCell].</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ## Safety</span>
+<span class="doccomment">/// The type must be 1, 2, or 4 bytes that&#39;s accessed in a single machine</span>
+<span class="doccomment">/// instruction. This mostly means integers or `repr(transparent)` wrapper</span>
+<span class="doccomment">/// structs over an integer.</span>
 <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">trait</span> <span class="ident">GbaCellSafe</span>: <span class="ident">Copy</span> {}
 
 <span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="ident">u8</span> {}
@@ -144,12 +164,16 @@
 <span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="ident">i32</span> {}
 
 <span class="comment">// Note(Lokathor): All `Option&lt;fn&gt;` types are GbaCellSafe, but I only want to</span>
-<span class="comment">// type so much at once. Feel free to add more impls here any time you need some</span>
-<span class="comment">// other `fn` type to be usable.</span>
+<span class="comment">// type out so much at once. Feel free to add more impls here any time you need</span>
+<span class="comment">// some other `fn` type to be usable.</span>
 <span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span>()<span class="op">&gt;</span> {}
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span>(<span class="ident">A</span>)<span class="op">&gt;</span> {}
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span>(<span class="ident">A</span>, <span class="ident">B</span>)<span class="op">&gt;</span> {}
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span>, <span class="ident">C</span><span class="op">&gt;</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span>(<span class="ident">A</span>, <span class="ident">B</span>, <span class="ident">C</span>)<span class="op">&gt;</span> {}
+<span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">fn</span>()<span class="op">&gt;</span> {}
+<span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">fn</span>(<span class="ident">A</span>)<span class="op">&gt;</span> {}
+<span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">fn</span>(<span class="ident">A</span>, <span class="ident">B</span>)<span class="op">&gt;</span> {}
+<span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span>, <span class="ident">C</span><span class="op">&gt;</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">fn</span>(<span class="ident">A</span>, <span class="ident">B</span>, <span class="ident">C</span>)<span class="op">&gt;</span> {}
 </code></pre></div>
 </section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="gba2k" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (c80c4b8fd 2022-06-26)" ></div>
 </body></html>

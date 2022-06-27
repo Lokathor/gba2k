@@ -54,24 +54,90 @@
 <span id="48">48</span>
 <span id="49">49</span>
 <span id="50">50</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">voladdress</span>::<span class="kw-2">*</span>;
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+</pre><pre class="rust"><code><span class="doccomment">//! Module for interacting with the GBA&#39;s hardware interrupt system.</span>
 
+<span class="kw">use</span> <span class="ident">voladdress</span>::<span class="kw-2">*</span>;
+
+<span class="doccomment">/// &quot;Interrupts Enabled&quot;</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IE</span>: <span class="ident">VolAddress</span><span class="op">&lt;</span><span class="ident">IrqBits</span>, <span class="ident">Safe</span>, <span class="ident">Safe</span><span class="op">&gt;</span> <span class="op">=</span>
   <span class="kw">unsafe</span> { <span class="ident">VolAddress::new</span>(<span class="number">0x0400_0200</span>) };
+
+<span class="doccomment">/// &quot;Interrupts Flagged&quot;</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// You do not normally need to use this at all. It&#39;s handled for you by the</span>
+<span class="doccomment">/// assembly runtime.</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IF</span>: <span class="ident">VolAddress</span><span class="op">&lt;</span><span class="ident">IrqBits</span>, <span class="ident">Safe</span>, <span class="ident">Safe</span><span class="op">&gt;</span> <span class="op">=</span>
   <span class="kw">unsafe</span> { <span class="ident">VolAddress::new</span>(<span class="number">0x0400_0202</span>) };
+
+<span class="doccomment">/// &quot;Interrupt Master Enable&quot;</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Obscure Note: there&#39;s a 2 cycle delay between an interrupt being triggered</span>
+<span class="doccomment">/// and the CPU actually switching over and running the handler code, so it&#39;s</span>
+<span class="doccomment">/// *possible* for `IME` to be written to false during this 2 cycle gap and you</span>
+<span class="doccomment">/// end up having an interrupt request happen while `IME` is off.</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IME</span>: <span class="ident">VolAddress</span><span class="op">&lt;</span><span class="ident">bool</span>, <span class="ident">Safe</span>, <span class="ident">Safe</span><span class="op">&gt;</span> <span class="op">=</span>
   <span class="kw">unsafe</span> { <span class="ident">VolAddress::new</span>(<span class="number">0x0400_0208</span>) };
 
 <span class="kw">mod</span> <span class="ident">gba_cell</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">gba_cell</span>::<span class="kw-2">*</span>;
 
+<span class="doccomment">/// A bit set where each bit is a particular interrupt source.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Default</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>, <span class="ident">Hash</span>)]</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">transparent</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">IrqBits</span>(<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">u16</span>);
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">IrqBits</span>(<span class="ident">u16</span>);
+
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">IrqBits</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">u16</span> {
+  <span class="attribute">#[<span class="ident">inline</span>]</span>
+  <span class="attribute">#[<span class="ident">must_use</span>]</span>
+  <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">i</span>: <span class="ident">IrqBits</span>) -&gt; <span class="self">Self</span> {
+    <span class="ident">i</span>.<span class="number">0</span>
+  }
+}
+
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">u16</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">IrqBits</span> {
+  <span class="attribute">#[<span class="ident">inline</span>]</span>
+  <span class="attribute">#[<span class="ident">must_use</span>]</span>
+  <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">u</span>: <span class="ident">u16</span>) -&gt; <span class="self">Self</span> {
+    <span class="self">Self</span>(<span class="ident">u</span>)
+  }
+}
 
 <span class="macro">impl_bitops_for!</span>(<span class="ident">IrqBits</span>);
 
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
 <span class="kw">impl</span> <span class="ident">IrqBits</span> {
   <span class="macro">pub_const_fn_new!</span>();
   <span class="macro">u16_bool_field!</span>(<span class="number">0</span>, <span class="ident">vblank</span>, <span class="ident">with_vblank</span>);

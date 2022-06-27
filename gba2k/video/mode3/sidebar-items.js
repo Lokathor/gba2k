@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["Mode3",""],["Scanlines",""]],"type":[["ColorAddress",""],["Scanline",""]]};
+window.SIDEBAR_ITEMS = {"struct":[["Mode3",""],["Mode3Scanlines",""]],"type":[["Mode3Scanline","A scanline of the Video Mode 3 bitmap."]]};
