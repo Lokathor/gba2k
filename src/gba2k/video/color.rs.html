@@ -60,6 +60,10 @@
 <span id="54">54</span>
 <span id="55">55</span>
 <span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">core::mem::size_of</span>;
 
 <span class="kw">use</span> <span class="ident">voladdress</span>::<span class="kw-2">*</span>;
@@ -70,6 +74,10 @@
 
 <span class="kw">impl</span> <span class="ident">Color</span> {
   <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">WHITE</span>: <span class="self">Self</span> <span class="op">=</span> <span class="self">Self</span>(<span class="number">0b11111_11111_11111</span>);
+  <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">BLACK</span>: <span class="self">Self</span> <span class="op">=</span> <span class="self">Self</span>(<span class="number">0</span>);
+  <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RED</span>: <span class="self">Self</span> <span class="op">=</span> <span class="self">Self</span>(<span class="number">0b00000_00000_11111</span>);
+  <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">GREEN</span>: <span class="self">Self</span> <span class="op">=</span> <span class="self">Self</span>(<span class="number">0b00000_11111_00000</span>);
+  <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">BLUE</span>: <span class="self">Self</span> <span class="op">=</span> <span class="self">Self</span>(<span class="number">0b11111_00000_00000</span>);
 
   <span class="macro">pub_const_fn_new!</span>();
   <span class="macro">u16_val_field!</span>(<span class="number">0</span> <span class="op">-</span> <span class="number">4</span>, <span class="ident">red</span>, <span class="ident">with_red</span>);

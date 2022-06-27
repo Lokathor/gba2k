@@ -77,16 +77,9 @@
 <span id="71">71</span>
 <span id="72">72</span>
 <span id="73">73</span>
-<span id="74">74</span>
-<span id="75">75</span>
-<span id="76">76</span>
-<span id="77">77</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">core</span>::{<span class="ident">cell::UnsafeCell</span>, <span class="ident">fmt::Debug</span>};
 
-<span class="kw">use</span> <span class="kw">crate</span>::{
-  <span class="ident">keys</span>::{<span class="ident">Keys</span>, <span class="ident">KeysLowActive</span>},
-  <span class="ident">video::Color</span>,
-};
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">keys::KeyInput</span>, <span class="ident">video::Color</span>};
 
 <span class="doccomment">/// A GbaCell holds a `Copy` value that&#39;s accessed in a single machine</span>
 <span class="doccomment">/// instruction.</span>
@@ -145,8 +138,7 @@
 <span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="ident">u16</span> {}
 <span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="ident">i16</span> {}
 <span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="ident">Color</span> {}
-<span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="ident">Keys</span> {}
-<span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="ident">KeysLowActive</span> {}
+<span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="ident">KeyInput</span> {}
 
 <span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="ident">u32</span> {}
 <span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">GbaCellSafe</span> <span class="kw">for</span> <span class="ident">i32</span> {}

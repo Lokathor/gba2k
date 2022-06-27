@@ -221,6 +221,27 @@
 <span id="215">215</span>
 <span id="216">216</span>
 <span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
 </pre><pre class="rust"><code><span class="doccomment">/// Inline assembly to read the stack pointer value.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The stack pointer doesn&#39;t usually move by much on the GBA.</span>
@@ -361,6 +382,27 @@
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_name</span>(<span class="self">self</span>, <span class="ident">val</span>: <span class="ident">bool</span>) -&gt; <span class="self">Self</span> {
       <span class="self">Self</span>(<span class="ident"><span class="kw">crate</span>::bit_utils::u16_with_bit</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">val</span>))
+    }
+  };
+}
+
+<span class="doccomment">/// Works like [u16_bool_field!] but inverts the meaning on input/output so that</span>
+<span class="doccomment">/// a stored &quot;0&quot; is active and a stored &quot;1&quot; is inactive.</span>
+<span class="macro">macro_rules!</span> <span class="ident">u16_low_active_bool_field</span> {
+  (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span>:<span class="ident">literal</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">get_name</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_name</span>: <span class="ident">ident</span>) =&gt; {
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">get_name</span>(<span class="self">self</span>) -&gt; <span class="ident">bool</span> {
+      <span class="comment">// invert bit on output</span>
+      <span class="op">!</span><span class="ident"><span class="kw">crate</span>::bit_utils::u16_get_bit</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>)
+    }
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_name</span>(<span class="self">self</span>, <span class="ident">val</span>: <span class="ident">bool</span>) -&gt; <span class="self">Self</span> {
+      <span class="comment">// invert bit on input</span>
+      <span class="self">Self</span>(<span class="ident"><span class="kw">crate</span>::bit_utils::u16_with_bit</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="op">!</span><span class="ident">val</span>))
     }
   };
 }
