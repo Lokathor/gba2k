@@ -1,15 +1,21 @@
 use voladdress::*;
 
+/// "Display Control"
 pub const DISPCNT: VolAddress<DisplayControl, Safe, Safe> =
   unsafe { VolAddress::new(0x0400_0000) };
 
+/// The display control setting is the top level control of the screen.
+///
+/// Primarily, the display control sets the video mode. Also, it lets you set
+/// which layers are displayed or not. Finally, it has a few other bits that
+/// control a few random other parts of the video system.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)]
 pub struct DisplayControl(u16);
 
 impl DisplayControl {
   pub_const_fn_new!();
-  unsafe_u16_enum_field!(0 - 2: DisplayMode, display_mode, with_display_mode);
+  unsafe_u16_enum_field!(0 - 2: VideoMode, video_mode, with_video_mode);
   u16_bool_field!(4, frame_select, with_frame_select);
   u16_bool_field!(5, hblank_oam_free, with_hblank_oam_free);
   u16_bool_field!(6, obj_vram_1d, with_obj_vram_1d);
@@ -26,7 +32,7 @@ impl DisplayControl {
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u16)]
-pub enum DisplayMode {
+pub enum VideoMode {
   #[default]
   _0 = 0,
   _1 = 1,
