@@ -1,3 +1,4 @@
+#![warn(missing_docs)]
 #![allow(non_snake_case)]
 
 //! The BIOS of the GBA provides some code that's built-in to the device.
