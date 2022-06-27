@@ -1,21 +1,54 @@
+//! Module for interacting with the GBA's hardware interrupt system.
+
 use voladdress::*;
 
+/// "Interrupts Enabled"
 pub const IE: VolAddress<IrqBits, Safe, Safe> =
   unsafe { VolAddress::new(0x0400_0200) };
+
+/// "Interrupts Flagged"
+///
+/// You do not normally need to use this at all. It's handled for you by the
+/// assembly runtime.
 pub const IF: VolAddress<IrqBits, Safe, Safe> =
   unsafe { VolAddress::new(0x0400_0202) };
+
+/// "Interrupt Master Enable"
+///
+/// Obscure Note: there's a 2 cycle delay between an interrupt being triggered
+/// and the CPU actually switching over and running the handler code, so it's
+/// *possible* for `IME` to be written to false during this 2 cycle gap and you
+/// end up having an interrupt request happen while `IME` is off.
 pub const IME: VolAddress<bool, Safe, Safe> =
   unsafe { VolAddress::new(0x0400_0208) };
 
 mod gba_cell;
 pub use gba_cell::*;
 
+/// A bit set where each bit is a particular interrupt source.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)]
-pub struct IrqBits(pub(crate) u16);
+pub struct IrqBits(u16);
+
+impl From<IrqBits> for u16 {
+  #[inline]
+  #[must_use]
+  fn from(i: IrqBits) -> Self {
+    i.0
+  }
+}
+
+impl From<u16> for IrqBits {
+  #[inline]
+  #[must_use]
+  fn from(u: u16) -> Self {
+    Self(u)
+  }
+}
 
 impl_bitops_for!(IrqBits);
 
+#[allow(missing_docs)]
 impl IrqBits {
   pub_const_fn_new!();
   u16_bool_field!(0, vblank, with_vblank);
