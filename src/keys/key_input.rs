@@ -5,6 +5,11 @@ pub const KEYINPUT: VolAddress<KeyInput, Safe, ()> =
   unsafe { VolAddress::new(0x0400_0130) };
 
 /// Key state data.
+///
+/// Each method uses `true` for *pressed* and `false` for *released*.
+/// Internally, the actual bits from the hardware are 0 when pressed and 1 when
+/// released, but all the methods will automatically compensate for this. The
+/// only time it should come up is if you're converting to/from a `u16` value.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)]
 pub struct KeyInput(u16);
