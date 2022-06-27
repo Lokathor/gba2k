@@ -1,3 +1,13 @@
+//! Module for utilizing the GBA's screen.
+//!
+//! ## Video Modes
+//!
+//! The GBA has 6 video modes. They're just referred to by their index, 0
+//! through 5.
+//!
+//! Currently the crate only provides direct support for Mode 3. Support for
+//! other modes is planned.
+
 use voladdress::*;
 
 pub mod mode3;
