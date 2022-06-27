@@ -32,8 +32,8 @@ pub fn IntrWait(clear_old_flags: bool, target_irqs: IrqBits) {
   unsafe {
     core::arch::asm! {
       "swi #0x04",
-      inout("r0") clear_old_flags as u32 => _,
-      inout("r1") target_irqs.0 => _,
+      inout("r0") u32::from(clear_old_flags) => _,
+      inout("r1") u16::from(target_irqs) => _,
       out("r3") _,
       options(preserves_flags)
     }
