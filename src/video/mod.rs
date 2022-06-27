@@ -25,6 +25,9 @@ const BG_PALETTE_BASE: usize = 0x0500_0000;
 const OBJ_PALETTE_BASE: usize = 0x0500_0200;
 const VRAM_BASE: usize = 0x0600_0000;
 
+/// A volatile address for a [Color] value.
+pub type ColorAddress = VolAddress<Color, Safe, Safe>;
+
 /// Returns the current scanline that the PPU is drawing (0 through 227).
 pub const VCOUNT: VolAddress<u8, Safe, ()> =
   unsafe { VolAddress::new(0x0400_0006) };
