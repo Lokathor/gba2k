@@ -1,9 +1,6 @@
 use core::{cell::UnsafeCell, fmt::Debug};
 
-use crate::{
-  keys::{Keys, KeysLowActive},
-  video::Color,
-};
+use crate::{keys::KeyInput, video::Color};
 
 /// A GbaCell holds a `Copy` value that's accessed in a single machine
 /// instruction.
@@ -62,8 +59,7 @@ unsafe impl GbaCellSafe for i8 {}
 unsafe impl GbaCellSafe for u16 {}
 unsafe impl GbaCellSafe for i16 {}
 unsafe impl GbaCellSafe for Color {}
-unsafe impl GbaCellSafe for Keys {}
-unsafe impl GbaCellSafe for KeysLowActive {}
+unsafe impl GbaCellSafe for KeyInput {}
 
 unsafe impl GbaCellSafe for u32 {}
 unsafe impl GbaCellSafe for i32 {}

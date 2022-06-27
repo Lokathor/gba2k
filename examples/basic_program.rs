@@ -23,7 +23,12 @@ extern "C" fn main() -> ! {
   DISPCNT.write(DisplayControl::new().with_display_bg0(true));
   loop {
     VBlankIntrWait();
-    BACKDROP_COLOR.write(THE_COLOR.read());
+    let keys = KEYINPUT.read();
+    if keys.start() {
+      BACKDROP_COLOR.write(Color::BLUE);
+    } else {
+      BACKDROP_COLOR.write(THE_COLOR.read());
+    }
   }
 }
 

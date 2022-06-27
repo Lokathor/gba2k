@@ -142,6 +142,27 @@ macro_rules! u16_bool_field {
   };
 }
 
+/// Works like [u16_bool_field!] but inverts the meaning on input/output so that
+/// a stored "0" is active and a stored "1" is inactive.
+macro_rules! u16_low_active_bool_field {
+  ($bit:literal, $get_name:ident, $with_name: ident) => {
+    #[inline]
+    #[must_use]
+    #[allow(missing_docs)]
+    pub const fn $get_name(self) -> bool {
+      // invert bit on output
+      !crate::bit_utils::u16_get_bit::<$bit>(self.0)
+    }
+    #[inline]
+    #[must_use]
+    #[allow(missing_docs)]
+    pub const fn $with_name(self, val: bool) -> Self {
+      // invert bit on input
+      Self(crate::bit_utils::u16_with_bit::<$bit>(self.0, !val))
+    }
+  };
+}
+
 macro_rules! u32_bool_field {
   ($bit:literal, $get_name:ident, $with_name: ident) => {
     #[inline]
