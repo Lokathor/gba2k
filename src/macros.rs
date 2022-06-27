@@ -236,3 +236,9 @@ macro_rules! impl_bitops_for {
     }
   };
 }
+
+macro_rules! size_of {
+  ($t:ty) => {
+    ::core::mem::size_of::<$t>()
+  };
+}
