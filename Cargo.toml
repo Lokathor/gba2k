@@ -10,3 +10,7 @@ voladdress = "1"
 
 [profile.dev]
 opt-level = 3
+
+[features]
+default = ["memcpy"]
+memcpy = [] # Provides Zlib-only code.
