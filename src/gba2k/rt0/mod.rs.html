@@ -147,6 +147,18 @@
 <span id="141">141</span>
 <span id="142">142</span>
 <span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
 </pre><pre class="rust"><code><span class="attribute">#![<span class="ident">warn</span>(<span class="ident">missing_docs</span>)]</span>
 
 <span class="doccomment">//! The `rt0` is the assembly runtime that runs *before* your Rust code.</span>
@@ -214,9 +226,9 @@
   <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">text_single_swpb</span>(<span class="ident">new_val</span>: <span class="ident">u8</span>, <span class="ident">addr</span>: <span class="kw-2">*mut</span> <span class="ident">u8</span>) -&gt; <span class="ident">u8</span>;
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;memcpy&quot;</span>)]</span>
-<span class="macro">global_asm!</span>(<span class="macro">include_str!</span>(<span class="string">&quot;memcpy.s&quot;</span>), <span class="ident">options</span>(<span class="ident">raw</span>));
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;memcpy&quot;</span>)]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;memory_fns&quot;</span>)]</span>
+<span class="macro">global_asm!</span>(<span class="macro">include_str!</span>(<span class="string">&quot;memory_fns.s&quot;</span>), <span class="ident">options</span>(<span class="ident">raw</span>));
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;memory_fns&quot;</span>)]</span>
 <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> {
   <span class="doccomment">/// Provides libc-style [memory copy][man-memcpy].</span>
   <span class="doccomment">///</span>
@@ -289,7 +301,19 @@
   <span class="doccomment">/// On the GBA, pointers with a known alignment of 8 instead of just 4 don&#39;t</span>
   <span class="doccomment">/// confer any additional advantage.</span>
   <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">__aeabi_memcpy8</span>(<span class="ident">dest</span>: <span class="kw-2">*mut</span> <span class="ident">u8</span>, <span class="ident">src</span>: <span class="kw-2">*mut</span> <span class="ident">u8</span>, <span class="ident">count</span>: <span class="ident">usize</span>);
+
+  <span class="doccomment">/// Like [memcpy], but the regions can overlap.</span>
+  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">memmove</span>(<span class="ident">dest</span>: <span class="kw-2">*mut</span> <span class="ident">u8</span>, <span class="ident">src</span>: <span class="kw-2">*mut</span> <span class="ident">u8</span>, <span class="ident">count</span>: <span class="ident">usize</span>) -&gt; <span class="kw-2">*mut</span> <span class="ident">u8</span>;
+
+  <span class="doccomment">/// Like [__aeabi_memcpy], but the regions can overlap.</span>
+  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">__aeabi_memmove</span>(<span class="ident">dest</span>: <span class="kw-2">*mut</span> <span class="ident">u8</span>, <span class="ident">src</span>: <span class="kw-2">*mut</span> <span class="ident">u8</span>, <span class="ident">count</span>: <span class="ident">usize</span>);
+
+  <span class="doccomment">/// Like [__aeabi_memcpy4], but the regions can overlap.</span>
+  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">__aeabi_memmove4</span>(<span class="ident">dest</span>: <span class="kw-2">*mut</span> <span class="ident">u8</span>, <span class="ident">src</span>: <span class="kw-2">*mut</span> <span class="ident">u8</span>, <span class="ident">count</span>: <span class="ident">usize</span>);
+
+  <span class="doccomment">/// Like [__aeabi_memcpy8], but the regions can overlap.</span>
+  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">__aeabi_memmove8</span>(<span class="ident">dest</span>: <span class="kw-2">*mut</span> <span class="ident">u8</span>, <span class="ident">src</span>: <span class="kw-2">*mut</span> <span class="ident">u8</span>, <span class="ident">count</span>: <span class="ident">usize</span>);
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="gba2k" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (ddcbba036 2022-06-29)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="gba2k" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (7425fb293 2022-06-30)" ></div>
 </body></html>
