@@ -65,9 +65,9 @@ extern "C" {
   pub fn text_single_swpb(new_val: u8, addr: *mut u8) -> u8;
 }
 
-#[cfg(feature = "memcpy")]
-global_asm!(include_str!("memcpy.s"), options(raw));
-#[cfg(feature = "memcpy")]
+#[cfg(feature = "memory_fns")]
+global_asm!(include_str!("memory_fns.s"), options(raw));
+#[cfg(feature = "memory_fns")]
 extern "C" {
   /// Provides libc-style [memory copy][man-memcpy].
   ///
@@ -140,4 +140,16 @@ extern "C" {
   /// On the GBA, pointers with a known alignment of 8 instead of just 4 don't
   /// confer any additional advantage.
   pub fn __aeabi_memcpy8(dest: *mut u8, src: *mut u8, count: usize);
+
+  /// Like [memcpy], but the regions can overlap.
+  pub fn memmove(dest: *mut u8, src: *mut u8, count: usize) -> *mut u8;
+
+  /// Like [__aeabi_memcpy], but the regions can overlap.
+  pub fn __aeabi_memmove(dest: *mut u8, src: *mut u8, count: usize);
+
+  /// Like [__aeabi_memcpy4], but the regions can overlap.
+  pub fn __aeabi_memmove4(dest: *mut u8, src: *mut u8, count: usize);
+
+  /// Like [__aeabi_memcpy8], but the regions can overlap.
+  pub fn __aeabi_memmove8(dest: *mut u8, src: *mut u8, count: usize);
 }

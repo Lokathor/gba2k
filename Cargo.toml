@@ -12,5 +12,5 @@ voladdress = "1"
 opt-level = 3
 
 [features]
-default = ["memcpy"]
-memcpy = [] # Provides Zlib-only code.
+default = ["memory_fns"]
+memory_fns = [] # Provides Zlib-only code.
