@@ -143,7 +143,7 @@ pub unsafe extern "C" fn copy_u8_reverse(mut dest: *mut u8, mut src: *const u8, 
 
 Now we feed that into Compiler Explorer and start inspecting the assembly.
 
-#### Optimized for Speed
+#### Copy `u8` Optimized for Speed
 
 If we set `-Copt-level=3` in Compiler Explorer let's see what we get.
 
@@ -174,7 +174,7 @@ example::copy_u8_reverse:
 Well, that's a good start.
 Basically what you'd expect from a loop this simple.
 
-#### Optimized for Size
+#### Copy `u8` Optimized for Size
 
 If we set Compiler Explorer for `-Copt-level=z` we can optimize for minimum code size instead.
 
@@ -202,7 +202,7 @@ example::copy_u8_reverse:
 
 Interesting. We're seeing a `sub`, then a branch which leads to a `cmp`. That's a little poor, I think we can adjust that a bit.
 
-#### Tuned By Hand
+#### Copy `u8` Tuned By Hand
 
 So with the forward copy, let's start with the small version.
 
@@ -376,7 +376,7 @@ copy_u8_reverse:
 
 #### Copy `u8` Summary
 
-I guess we're all set for copying `u8` at a time.
+I guess we're all set for copying `u8` at a time:
 
 ```arm
 copy_u8_forward:
@@ -396,3 +396,6 @@ copy_u8_reverse:
     strb    r3, [r1, #-1]!
     b       1b
 ```
+
+Of course if we only ever did this it would be quite slow,
+so we've got to develop some better copies and speed things up.
