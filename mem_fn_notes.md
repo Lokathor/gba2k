@@ -265,7 +265,7 @@ copy_u8_forward:
 ```
 
 But now our [conditional code](https://azeria-labs.com/arm-conditional-execution-and-branching-part-6/) has to change.
-* Before we had `bxeq`. That's "`bx` when `eq`", so if `r2` (the register we just compared) equals 0, then we did a branch-exchange. Otherwise we did the subtract, the read, and the write.
+* Before we had `bxeq`. That's "`bx` when `eq`". The flags were set by `cmp r2, #0`, so if `r2` equals 0 we did a branch-exchange. Otherwise we did the subtract, the read, and the write.
 * Now we're effectively subtracting *before* checking the flags. The flags are set by the outcome of the subtract operation. So if we subtract and *get* 0, the count *was* 1, and we should *keep going* because we have to copy the final byte. We should only stop the loop when we wrap below 0. `subs` sets the Carry flag when you wrap below 0, so we want to use the `cs` ("carry set") condition.
 
 ```arm
@@ -279,7 +279,6 @@ copy_u8_forward:
 ```
 
 Finally, we can just remove the local label and branch to the function entry.
-Note that when we put this in an actual file we'll need to take out the `::` part, which isn't allowed in labels in real code.
 
 ```arm
 copy_u8_forward:
