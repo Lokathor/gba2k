@@ -107,9 +107,7 @@ The direction of our copy has some unfortunate speed implications! Memory has bo
 * We're going to call a copy from low to high, in sequential ordering, the "forward" copy.
 * Going from high to low, non-sequential, will be a "reverse" copy.
 
-## The Code
-
-### Going By `u8`
+## Going By `u8`
 
 Let's start with functions that copy `u8` at a time. As mentioned, we need both a "forward" and "reverse" form.
 
@@ -143,7 +141,7 @@ pub unsafe extern "C" fn copy_u8_reverse(mut dest: *mut u8, mut src: *const u8, 
 
 Now we feed that into Compiler Explorer and start inspecting the assembly.
 
-#### Copy `u8` Optimized for Speed
+### Copy `u8` Optimized for Speed
 
 If we set `-Copt-level=3` in Compiler Explorer let's see what we get.
 
@@ -174,7 +172,7 @@ example::copy_u8_reverse:
 Well, that's a good start.
 Basically what you'd expect from a loop this simple.
 
-#### Copy `u8` Optimized for Size
+### Copy `u8` Optimized for Size
 
 If we set Compiler Explorer for `-Copt-level=z` we can optimize for minimum code size instead.
 
@@ -202,7 +200,7 @@ example::copy_u8_reverse:
 
 Interesting. We're seeing a `sub`, then a branch which leads to a `cmp`. That's a little poor, I think we can adjust that a bit.
 
-#### Copy `u8` Tuned By Hand
+### Copy `u8` Tuned By Hand
 
 So with the forward copy, let's start with the small version.
 
@@ -373,7 +371,7 @@ copy_u8_reverse:
     b       1b
 ```
 
-#### Copy `u8` Summary
+### Copy `u8` Summary
 
 I guess we're all set for copying `u8` at a time:
 
@@ -398,3 +396,121 @@ copy_u8_reverse:
 
 Of course if we only ever did this it would be quite slow,
 so we've got to develop some better copies and speed things up.
+
+## Going By "mostly `u16`"
+
+Alright, now that we've done the "`u8` only" version as a warm up, let's keep going with bigger data.
+
+The next size up from byte copying is `u16` ("halfword") copying.
+For these functions, we'll copy *as much as possible* with 16-bit accesses.
+That said, if the amount to copy is odd we'll be forced to do a single 8-bit access as well.
+Given that the size of types in Rust is always a multiple of their alignment,
+it seems *deeply* unlikely that someone would call the functions for pointers aligned to 2 and then ask for an odd number of bytes to be copied.
+However, it can potentially happen, and our function must perform properly in such a situation.
+
+### "mostly `u16`", Rust
+
+```rust
+pub unsafe extern "C" fn copy_u16_forward(mut dest: *mut u16, mut src: *const u16, mut count: usize) {
+  const SIZE_U16: usize = core::mem::size_of::<u16>();
+  while count >= SIZE_U16 {
+    *dest = *src;
+    dest = dest.add(1);
+    src = src.add(1);
+    count -= SIZE_U16;
+  }
+  if count % 2 != 0 {
+    dest.cast::<u8>().write(src.cast::<u8>().read());
+  }
+}
+
+pub unsafe extern "C" fn copy_u16_reverse(mut dest: *mut u16, mut src: *const u16, mut count: usize) {
+  const SIZE_U16: usize = core::mem::size_of::<u16>();
+  dest = dest.add(count);
+  src = src.add(count);
+  if count % 2 != 0 {
+    dest.cast::<u8>().write(src.cast::<u8>().read());
+  }
+  while count >= SIZE_U16 {
+    dest = dest.sub(1);
+    src = src.sub(1);
+    *dest = *src;
+    count -= SIZE_U16;
+  }
+}
+```
+
+### "mostly `u16`", LLVM Assembly
+
+opt-level=3
+
+```arm
+example::copy_u16_forward:
+        cmp     r2, #2
+        blo     .LBB0_2
+.LBB0_1:
+        ldrh    r3, [r1], #2
+        sub     r2, r2, #2
+        strh    r3, [r0], #2
+        cmp     r2, #1
+        bhi     .LBB0_1
+.LBB0_2:
+        cmp     r2, #0
+        ldrbne  r1, [r1]
+        strbne  r1, [r0]
+        bx      lr
+
+example::copy_u16_reverse:
+        tst     r2, #1
+        ldrbne  r3, [r1, r2, lsl #1]
+        strbne  r3, [r0, r2, lsl #1]
+        cmp     r2, #2
+        bxlo    lr
+        mvn     r3, #1
+        add     r3, r3, r2, lsl #1
+        add     r1, r1, r3
+        add     r0, r0, r3
+.LBB1_2:
+        ldrh    r3, [r1], #-2
+        sub     r2, r2, #2
+        strh    r3, [r0], #-2
+        cmp     r2, #1
+        bhi     .LBB1_2
+        bx      lr
+```
+
+opt-level=z
+
+```arm
+example::copy_u16_forward:
+.LBB0_1:
+        cmp     r2, #1
+        bls     .LBB0_3
+        ldrh    r3, [r1], #2
+        sub     r2, r2, #2
+        strh    r3, [r0], #2
+        b       .LBB0_1
+.LBB0_3:
+        cmp     r2, #0
+        ldrbne  r1, [r1]
+        strbne  r1, [r0]
+        bx      lr
+
+example::copy_u16_reverse:
+        tst     r2, #1
+        ldrbne  r3, [r1, r2, lsl #1]
+        strbne  r3, [r0, r2, lsl #1]
+        mvn     r3, #1
+        add     r3, r3, r2, lsl #1
+        add     r0, r0, r3
+        add     r1, r1, r3
+.LBB1_1:
+        cmp     r2, #1
+        bxls    lr
+        ldrh    r3, [r1], #-2
+        sub     r2, r2, #2
+        strh    r3, [r0], #-2
+        b       .LBB1_1
+```
+
+### "mostly `u16`", Hand Assembly
