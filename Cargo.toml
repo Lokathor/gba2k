@@ -8,6 +8,7 @@ publish = false
 [dependencies]
 voladdress = "1"
 bitfrob = "0.1.1"
+arm7tdmi_aeabi = "0.2"
 
 [profile.dev]
 opt-level = 3
