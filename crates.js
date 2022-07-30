@@ -1,1 +1,1 @@
-window.ALL_CRATES = ["gba2k","voladdress"];
+window.ALL_CRATES = ["bitfrob","gba2k","voladdress"];

@@ -29,12 +29,6 @@
 <span id="23">23</span>
 <span id="24">24</span>
 <span id="25">25</span>
-<span id="26">26</span>
-<span id="27">27</span>
-<span id="28">28</span>
-<span id="29">29</span>
-<span id="30">30</span>
-<span id="31">31</span>
 </pre><pre class="rust"><code><span class="attribute">#![<span class="ident">no_std</span>]</span>
 <span class="comment">//#![warn(missing_docs)]</span>
 <span class="attribute">#![<span class="ident">warn</span>(<span class="ident">missing_copy_implementations</span>)]</span>
@@ -54,18 +48,12 @@
 
 <span class="attribute">#[<span class="ident">macro_use</span>]</span>
 <span class="kw">mod</span> <span class="ident">macros</span>;
-<span class="kw">mod</span> <span class="ident">bit_utils</span>;
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">bios</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">interrupts</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">keys</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">rt0</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">video</span>;
-
-<span class="attribute">#[<span class="ident">panic_handler</span>]</span>
-<span class="kw">fn</span> <span class="ident">the_panic_handler</span>(<span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">core::panic::PanicInfo</span>) -&gt; <span class="op">!</span> {
-  <span class="kw">loop</span> {}
-}
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="gba2k" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (87588a2af 2022-07-13)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="gba2k" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (3924dac7b 2022-07-29)" ></div>
 </body></html>

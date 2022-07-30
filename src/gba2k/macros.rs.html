@@ -246,8 +246,6 @@
 <span id="240">240</span>
 <span id="241">241</span>
 <span id="242">242</span>
-<span id="243">243</span>
-<span id="244">244</span>
 </pre><pre class="rust"><code><span class="doccomment">/// Inline assembly to read the stack pointer value.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The stack pointer doesn&#39;t usually move by much on the GBA.</span>
@@ -327,16 +325,14 @@
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">get_name</span>(<span class="self">self</span>) -&gt; <span class="macro-nonterminal">$</span><span class="macro-nonterminal">enum_ty</span> {
       <span class="kw">unsafe</span> {
-        <span class="ident">core::mem::transmute</span>(<span class="ident"><span class="kw">crate</span>::bit_utils::u16_get_region</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span><span class="op">&gt;</span>(
-          <span class="self">self</span>.<span class="number">0</span>,
-        ))
+        <span class="ident">core::mem::transmute</span>(<span class="ident">bitfrob::u16_get_region</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>))
       }
     }
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_name</span>(<span class="self">self</span>, <span class="ident">val</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">enum_ty</span>) -&gt; <span class="self">Self</span> {
-      <span class="self">Self</span>(<span class="ident"><span class="kw">crate</span>::bit_utils::u16_with_region</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">val</span> <span class="kw">as</span> <span class="ident">u16</span>))
+      <span class="self">Self</span>(<span class="ident">bitfrob::u16_with_region</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">val</span> <span class="kw">as</span> <span class="ident">u16</span>))
     }
   };
 }
@@ -347,13 +343,13 @@
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">get_name</span>(<span class="self">self</span>) -&gt; <span class="ident">u16</span> {
-      <span class="ident"><span class="kw">crate</span>::bit_utils::u16_get_value</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>)
+      <span class="ident">bitfrob::u16_get_value</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>)
     }
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_name</span>(<span class="self">self</span>, <span class="ident">val</span>: <span class="ident">u16</span>) -&gt; <span class="self">Self</span> {
-      <span class="self">Self</span>(<span class="ident"><span class="kw">crate</span>::bit_utils::u16_with_value</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">val</span>))
+      <span class="self">Self</span>(<span class="ident">bitfrob::u16_with_value</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">val</span>))
     }
   };
 }
@@ -364,13 +360,13 @@
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">get_name</span>(<span class="self">self</span>) -&gt; <span class="ident">u32</span> {
-      <span class="ident"><span class="kw">crate</span>::bit_utils::u32_get_value</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>)
+      <span class="ident">bitfrob::u32_get_value</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>)
     }
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_name</span>(<span class="self">self</span>, <span class="ident">val</span>: <span class="ident">u32</span>) -&gt; <span class="self">Self</span> {
-      <span class="self">Self</span>(<span class="ident"><span class="kw">crate</span>::bit_utils::u32_with_value</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">val</span>))
+      <span class="self">Self</span>(<span class="ident">bitfrob::u32_with_value</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">low</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">high</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">val</span>))
     }
   };
 }
@@ -381,13 +377,13 @@
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">get_name</span>(<span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-      <span class="ident"><span class="kw">crate</span>::bit_utils::u16_get_bit</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>)
+      <span class="ident">bitfrob::u16_get_bit</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>)
     }
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_name</span>(<span class="self">self</span>, <span class="ident">val</span>: <span class="ident">bool</span>) -&gt; <span class="self">Self</span> {
-      <span class="self">Self</span>(<span class="ident"><span class="kw">crate</span>::bit_utils::u16_with_bit</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">val</span>))
+      <span class="self">Self</span>(<span class="ident">bitfrob::u16_with_bit</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">val</span>))
     }
   };
 }
@@ -401,14 +397,14 @@
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">get_name</span>(<span class="self">self</span>) -&gt; <span class="ident">bool</span> {
       <span class="comment">// invert bit on output</span>
-      <span class="op">!</span><span class="ident"><span class="kw">crate</span>::bit_utils::u16_get_bit</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>)
+      <span class="op">!</span><span class="ident">bitfrob::u16_get_bit</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>)
     }
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_name</span>(<span class="self">self</span>, <span class="ident">val</span>: <span class="ident">bool</span>) -&gt; <span class="self">Self</span> {
       <span class="comment">// invert bit on input</span>
-      <span class="self">Self</span>(<span class="ident"><span class="kw">crate</span>::bit_utils::u16_with_bit</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="op">!</span><span class="ident">val</span>))
+      <span class="self">Self</span>(<span class="ident">bitfrob::u16_with_bit</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="op">!</span><span class="ident">val</span>))
     }
   };
 }
@@ -419,13 +415,13 @@
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">get_name</span>(<span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-      <span class="ident"><span class="kw">crate</span>::bit_utils::u32_get_bit</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>)
+      <span class="ident">bitfrob::u32_get_bit</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>)
     }
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_name</span>(<span class="self">self</span>, <span class="ident">val</span>: <span class="ident">bool</span>) -&gt; <span class="self">Self</span> {
-      <span class="self">Self</span>(<span class="ident"><span class="kw">crate</span>::bit_utils::u32_with_bit</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">val</span>))
+      <span class="self">Self</span>(<span class="ident">bitfrob::u32_with_bit</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">bit</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">val</span>))
     }
   };
 }
@@ -493,5 +489,5 @@
   };
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="gba2k" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (87588a2af 2022-07-13)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="gba2k" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (3924dac7b 2022-07-29)" ></div>
 </body></html>
