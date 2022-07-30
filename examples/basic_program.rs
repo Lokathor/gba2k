@@ -36,3 +36,8 @@ extern "C" fn main() -> ! {
 extern "C" fn the_rust_irq_handler(_: IrqBits) {
   THE_COLOR.write(Color::from(u16::from(KEYINPUT.read())));
 }
+
+#[panic_handler]
+fn the_panic_handler(_: &core::panic::PanicInfo) -> ! {
+  loop {}
+}

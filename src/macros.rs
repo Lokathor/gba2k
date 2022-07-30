@@ -77,16 +77,14 @@ macro_rules! unsafe_u16_enum_field {
     #[allow(missing_docs)]
     pub const fn $get_name(self) -> $enum_ty {
       unsafe {
-        core::mem::transmute(crate::bit_utils::u16_get_region::<$low, $high>(
-          self.0,
-        ))
+        core::mem::transmute(bitfrob::u16_get_region::<$low, $high>(self.0))
       }
     }
     #[inline]
     #[must_use]
     #[allow(missing_docs)]
     pub const fn $with_name(self, val: $enum_ty) -> Self {
-      Self(crate::bit_utils::u16_with_region::<$low, $high>(self.0, val as u16))
+      Self(bitfrob::u16_with_region::<$low, $high>(self.0, val as u16))
     }
   };
 }
@@ -97,13 +95,13 @@ macro_rules! u16_val_field {
     #[must_use]
     #[allow(missing_docs)]
     pub const fn $get_name(self) -> u16 {
-      crate::bit_utils::u16_get_value::<$low, $high>(self.0)
+      bitfrob::u16_get_value::<$low, $high>(self.0)
     }
     #[inline]
     #[must_use]
     #[allow(missing_docs)]
     pub const fn $with_name(self, val: u16) -> Self {
-      Self(crate::bit_utils::u16_with_value::<$low, $high>(self.0, val))
+      Self(bitfrob::u16_with_value::<$low, $high>(self.0, val))
     }
   };
 }
@@ -114,13 +112,13 @@ macro_rules! u32_val_field {
     #[must_use]
     #[allow(missing_docs)]
     pub const fn $get_name(self) -> u32 {
-      crate::bit_utils::u32_get_value::<$low, $high>(self.0)
+      bitfrob::u32_get_value::<$low, $high>(self.0)
     }
     #[inline]
     #[must_use]
     #[allow(missing_docs)]
     pub const fn $with_name(self, val: u32) -> Self {
-      Self(crate::bit_utils::u32_with_value::<$low, $high>(self.0, val))
+      Self(bitfrob::u32_with_value::<$low, $high>(self.0, val))
     }
   };
 }
@@ -131,13 +129,13 @@ macro_rules! u16_bool_field {
     #[must_use]
     #[allow(missing_docs)]
     pub const fn $get_name(self) -> bool {
-      crate::bit_utils::u16_get_bit::<$bit>(self.0)
+      bitfrob::u16_get_bit::<$bit>(self.0)
     }
     #[inline]
     #[must_use]
     #[allow(missing_docs)]
     pub const fn $with_name(self, val: bool) -> Self {
-      Self(crate::bit_utils::u16_with_bit::<$bit>(self.0, val))
+      Self(bitfrob::u16_with_bit::<$bit>(self.0, val))
     }
   };
 }
@@ -151,14 +149,14 @@ macro_rules! u16_low_active_bool_field {
     #[allow(missing_docs)]
     pub const fn $get_name(self) -> bool {
       // invert bit on output
-      !crate::bit_utils::u16_get_bit::<$bit>(self.0)
+      !bitfrob::u16_get_bit::<$bit>(self.0)
     }
     #[inline]
     #[must_use]
     #[allow(missing_docs)]
     pub const fn $with_name(self, val: bool) -> Self {
       // invert bit on input
-      Self(crate::bit_utils::u16_with_bit::<$bit>(self.0, !val))
+      Self(bitfrob::u16_with_bit::<$bit>(self.0, !val))
     }
   };
 }
@@ -169,13 +167,13 @@ macro_rules! u32_bool_field {
     #[must_use]
     #[allow(missing_docs)]
     pub const fn $get_name(self) -> bool {
-      crate::bit_utils::u32_get_bit::<$bit>(self.0)
+      bitfrob::u32_get_bit::<$bit>(self.0)
     }
     #[inline]
     #[must_use]
     #[allow(missing_docs)]
     pub const fn $with_name(self, val: bool) -> Self {
-      Self(crate::bit_utils::u32_with_bit::<$bit>(self.0, val))
+      Self(bitfrob::u32_with_bit::<$bit>(self.0, val))
     }
   };
 }

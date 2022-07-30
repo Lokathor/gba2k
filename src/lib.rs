@@ -17,15 +17,9 @@
 
 #[macro_use]
 mod macros;
-mod bit_utils;
 
 pub mod bios;
 pub mod interrupts;
 pub mod keys;
 pub mod rt0;
 pub mod video;
-
-#[panic_handler]
-fn the_panic_handler(_: &core::panic::PanicInfo) -> ! {
-  loop {}
-}
