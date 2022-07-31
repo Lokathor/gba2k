@@ -76,16 +76,3 @@ also a Rust version you can just build/install it through `cargo`.
 ```sh
 cargo install gbafix
 ```
-
-## License
-
-The majority of the crate, including all Rust code, is licensed under `Zlib OR
-Apache-2.0 OR MIT`. This is compatible with the usual `Apache-2.0 OR MIT`
-license that people expect with Rust projects.
-
-Some of the provided assembly code is adapted from the
-[agbabi](https://github.com/felixjones/agbabi) project, which *only* uses the
-`Zlib` license (not MIT or Apache-2.0). All of the Zlib-only code is kept behind
-cargo feature flags, so it can be disabled if that's somehow a problem for you.
-Since the Zlib license is even *more* permissive than the MIT license it's
-assumed that this isn't a problem, and so these features are on by default.
