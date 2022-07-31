@@ -9,6 +9,8 @@ use core::arch::global_asm;
 
 use crate::interrupts::{GbaCell, IrqBits};
 
+arm7tdmi_aeabi::generate_fns!(section_prefix = ".iwram");
+
 global_asm! {
   include_str!("header_and_init.s"),
   options(raw)
@@ -34,35 +36,3 @@ extern "C" {
 pub fn set_rust_irq_handler(opt_f: Option<extern "C" fn(IrqBits)>) {
   unsafe { RUST_IRQ_HANDLER.write(opt_f) };
 }
-
-global_asm!(include_str!("single_swp.s"), options(raw));
-extern "C" {
-  /// A `swp` instruction, stored in the `.text` section.
-  ///
-  /// Reads `addr` and then writes `new_val` to `addr` as a single, atomic
-  /// action.
-  ///
-  /// * **Returns:** the previous value at `addr`.
-  ///
-  /// ## Safety
-  /// * The pointer must be aligned and valid for a read.
-  /// * The pointer must be aligned and valid for a write.
-  pub fn text_single_swp(new_val: u32, addr: *mut u32) -> u32;
-}
-
-global_asm!(include_str!("single_swpb.s"), options(raw));
-extern "C" {
-  /// A `swpb` instruction, stored in the `.text` section.
-  ///
-  /// Reads `addr` and then writes `new_val` to `addr` as a single, atomic
-  /// action.
-  ///
-  /// * **Returns:** the previous value at `addr`.
-  ///
-  /// ## Safety
-  /// * The pointer must be aligned and valid for a read.
-  /// * The pointer must be aligned and valid for a write.
-  pub fn text_single_swpb(new_val: u8, addr: *mut u8) -> u8;
-}
-
-arm7tdmi_aeabi::generate_fns!(section_prefix = ".iwram");
