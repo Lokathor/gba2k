@@ -14,5 +14,4 @@ arm7tdmi_aeabi = "0.2"
 opt-level = 3
 
 [features]
-default = ["memory_fns"]
-memory_fns = [] # Provides Zlib-only code.
+default = []

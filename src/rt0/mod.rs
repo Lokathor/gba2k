@@ -65,5 +65,4 @@ extern "C" {
   pub fn text_single_swpb(new_val: u8, addr: *mut u8) -> u8;
 }
 
-#[cfg(feature = "memory_fns")]
 arm7tdmi_aeabi::generate_fns!(section_prefix = ".iwram");
