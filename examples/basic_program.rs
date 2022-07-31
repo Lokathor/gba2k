@@ -6,6 +6,7 @@ use gba2k::{
   interrupts::{GbaCell, IrqBits, IE, IME},
   keys::KEYINPUT,
   rt0::set_rust_irq_handler,
+  swp, t32_bx_r3,
   video::{
     Color, DisplayControl, DisplayStatus, BACKDROP_COLOR, DISPCNT, DISPSTAT,
   },
@@ -20,9 +21,18 @@ extern "C" fn main() -> ! {
   IE.write(IrqBits::V_BLANK);
   IME.write(true);
 
+  let mut dest = [0; 4];
+  let src = [1, 2, 3, 4];
+  unsafe {
+    t32_bx_r3(dest.as_mut_ptr(), src.as_ptr(), 4, gba2k::rt0::gba_memcpy_sram)
+  };
+
+  let mut x = 0_u32;
   DISPCNT.write(DisplayControl::new().with_display_bg0(true));
   loop {
     VBlankIntrWait();
+    swp(x.wrapping_add(1), &mut x);
+    //unsafe { text_single_swp(x.wrapping_add(1), &mut x) };
     let keys = KEYINPUT.read();
     if keys.start() {
       BACKDROP_COLOR.write(Color::BLUE);
