@@ -1,7 +1,7 @@
 /* RUST_IRQ_HANDLER: Option<extern "C" fn(IrqBits)> = None; */
 .global RUST_IRQ_HANDLER
 
-.section .bss.rust_irq_handler_fn_ptr
+.section ".bss.rust_irq_handler_fn_ptr"
   .balign 4
   RUST_IRQ_HANDLER:
     .space 4
@@ -10,7 +10,7 @@
 /* This fn can only be called by the GBA's BIOS IRQ handling. */
 .global rt0_irq_handler
 
-.section .iwram.rt0_irq_handler
+.section ".iwram.rt0_irq_handler"
   .code 32
   .balign 4
   rt0_irq_handler:
@@ -60,7 +60,7 @@
     mrs r2, SPSR      @save SPSR
     push {r0, r2}     @push SPSR (SVC)
 
-    mov r2, #0b00011111
+    mov r2, #0b00011111 @ SYS mode + no masking
     msr CPSR_cf, r2   @set SYS mode
 
     /* We need to push an even number of registers here. We also need to save,
@@ -76,7 +76,7 @@
 
     pop {r3, lr} @pop regs (SYS)
 
-    mov r2, #0b10010010
+    mov r2, #0b10010010 @ SVC mode + IRQ masked
     msr CPSR_cf, r2   @set SVC mode
 
     pop {r0, r2}      @pop SPSR (SVC)
